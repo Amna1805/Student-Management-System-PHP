@@ -1,0 +1,83 @@
+/* Your general styling for services section */
+.services {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: white;    
+    justify-content: center;
+    align-items: center;
+   margin: 25px;
+}
+
+.service-card {
+    width: 25%; /* 4 columns in a row */
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    height: 250px;
+    text-align: center;
+    padding-top: 55px;
+}
+
+.service-card h3 {
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.service-card p {
+    font-size: 16px;
+}
+.services-page{
+    margin-top: 50px;
+}
+.services-page .title h6
+{
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 30px;
+    font-weight:800;
+    color:#003b80
+}
+.services-page .title p
+{
+    text-align: center;
+    width:70%;
+    margin: 0 auto;
+}
+.services-page .title
+{
+    margin-bottom: 50px;
+}
+#service1,#service3,#service6,#service8
+{
+    background-color: #F4F7FC;
+    color: #003b80;
+}
+#service2,#service4,#service5,#service7
+{
+    background-color: #cb7219;
+    color: white;
+}
+@media (min-width: 850px) and (max-width: 1000px) {
+    .service-card h3 {
+        font-size: 16px;
+    }
+    
+    .service-card p {
+        font-size: 12px;
+    }
+}
+@media (max-width: 850px) {
+    .service-card {
+        width: 100%; /* 2 columns in a row */
+    }
+    #service1,#service3,#service5,#service7
+    {
+        background-color: #F4F7FC;
+        color: black;
+    }
+    #service2,#service4,#service6,#service8
+    {
+        background-color: #306EC7;
+        color: white;
+    }
+}

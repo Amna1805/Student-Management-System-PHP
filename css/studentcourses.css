@@ -1,0 +1,13 @@
+.view-more {
+    text-align: center;
+    margin-top: 50px;
+    cursor: pointer;
+}
+
+.view-more span {
+    margin-right: 10px;
+}
+
+.view-more i {
+    font-size: 20px;
+}

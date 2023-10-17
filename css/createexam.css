@@ -1,0 +1,89 @@
+.mcq {
+    margin-bottom: 20px;
+}
+
+.question {
+    width:400px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    border: none;
+    margin-top: 10px;
+}
+.questionsdiv
+{
+    display:flex;
+    align-items: center;
+}
+.questionsdiv p {
+    margin: 0;
+    margin-right: 10px; /* Adjust the margin as needed */
+}
+.exam-info input{
+    box-sizing: border-box;
+    border-radius: 20px;
+    padding: 10px;
+    background-color: #5295c2;
+    border:none;
+    text-align: center;
+
+}
+.exam-info input::placeholder{
+   color: white;
+}
+.option {
+    display: block;
+    width: 70%;
+    padding: 10px;
+    margin-bottom: 15px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    border: none;
+}
+.mcq .optionsdiv {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.mcq .optionsdiv label {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.mcq .optionsdiv label input[type="radio"] {
+    margin-right: 10px;
+}
+.create-button {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto; /* Adjust margin as needed */
+}
+
+.create-button button{
+    padding: 10px 20px;
+    background-color: #227cb9; /* Blue color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.create-button button:hover {
+    background-color: #0e5f96; /* Darker Blue on hover */
+}
+@media (max-width: 768px) {
+   
+    .question,.option
+    {
+        padding: 5px;
+        width: 100%;
+        font-size: 12px;
+    }
+}

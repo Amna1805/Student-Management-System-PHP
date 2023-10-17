@@ -1,0 +1,217 @@
+.image-with-text {
+    text-align: center;
+    height: 70vh;
+    position: relative;
+}
+
+.image-with-text .overlay {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.image-with-text img {
+    width: 100%;
+    height: 100%;
+}
+
+.image-text-container {
+    position: absolute;
+    top: 50%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    color: white;
+    text-align: left;
+
+}
+
+.image-text {
+    margin: 10px 0;
+}
+
+.register-button {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007BFF; /* You can change the background color */
+    color: #fff; /* Text color */
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.register-button:hover {
+    background-color: #0056b3; /* Change the hover background color if desired */
+}
+
+@media (max-width: 767px) {
+    .image-with-text {
+        height: 80vh; /* Increase the height for smaller screens */
+    }
+}
+
+.course_detail_card {
+    background-color: rgb(239, 235, 235);
+    padding: 15px;
+    border-top: 2px solid #ccc;
+    margin-left: 11%;
+    margin-top: -50px; /* Move card up by half its height */
+    position: absolute;
+    width: 80%;
+    box-sizing: border-box;
+    border-radius: 10px;
+    text-align: center;
+    
+}
+
+.details {
+    display: flex;
+    justify-content: space-between; /* Distribute details evenly */
+    align-items: center; /* Align items vertically in the center */
+}
+
+.detail-item {
+    flex-basis: calc(33.33% - 10px); /* Each detail occupies 33.33% width with spacing */
+    text-align: center; /* Center-align the content */
+}
+.detail-item p{
+    margin-top: 8px;
+}
+
+.details hr {
+    border: none;
+    border-left: 2px solid #a09d9d; /* Add vertical line between details */
+    height: 60px; /* Adjust the height as needed */
+    margin: 0;
+}
+.details h3 {
+    margin: 0;
+}
+.image-and-card{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+
+}
+
+
+/* Style for the about section */
+.about {
+    background-color: #f9f9f9; /* Background color */
+    padding: 20px; /* Add padding around the content */
+    border: 1px solid #ddd; /* Add a border */
+    border-radius: 5px; /* Add rounded corners */
+    margin: 20px; /* Add margin to separate it from other content */
+    text-align: justify; /* Justify the text */
+    line-height: 1.5; /* Adjust line height for readability */
+    margin-top: 80px;
+}
+
+/* Style for the about section title */
+.about h1 {
+    font-size: 30px; /* Increase the font size for the title */
+    margin-bottom: 10px; /* Add space below the title */
+    color: #0056b3;
+    text-align: center;
+}
+
+/* Style for the paragraphs within the about section */
+.about p {
+    font-size: 16px; /* Set the font size for the paragraphs */
+    margin-bottom: 10px; /* Add space between paragraphs */
+}
+
+
+.outline {
+    text-align: center;
+}
+
+.outline h1 {
+    font-size: 30px;
+    color: #0056b3;
+}
+
+.outline-cards {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 20px;
+    justify-content: space-around;
+    background-color: #54a27c16;
+ 
+
+}
+
+.outline_card {
+   
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 50px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    text-align: left;
+    width: 400px;
+    height: 500px;
+    margin:5px;
+
+}
+
+.course_modules h3 {
+    margin-top: 0;
+}
+
+.course_modules ul {
+    list-style: disc;
+    padding-left: 20px;
+}
+
+.course_modules li {
+    margin-bottom: 5px;
+}
+
+@media (max-width: 1100px) {
+    .image-and-card{
+        position: relative;
+        height: 100vh;
+    
+    }
+
+    .course_detail_card {
+        position: relative; /* Remove absolute positioning for smaller screens */
+        margin-top: 20px; /* Add margin to separate from the image with text */
+    }
+    .about{
+        margin-top: 50px;
+    }
+}
+
+@media (max-width: 950px) {
+    .outline-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .outline_card {
+        width: 50%;
+        margin:  5px;
+        height: fit-content;
+    }
+    .about{
+        margin-top: 50px;
+    }
+
+}
+
+@media (max-width: 767px) {
+    .image-text-container {
+        top: 50%; /* Center vertically on small screens */
+        left: 50%; /* Center horizontally on small screens */
+        transform: translate(-50%, -50%);
+        width: 80%; /* Adjust the width as needed */
+    }
+}

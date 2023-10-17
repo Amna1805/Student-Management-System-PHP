@@ -1,0 +1,115 @@
+
+.policy h6 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #003b80;
+    margin-bottom: 35px;
+        text-align: center;
+        font-size: 24px;
+}
+.responsivetable
+{
+    overflow-x: auto;
+}
+
+.policy-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+
+}
+
+
+.policy-table th, .policy-table td {
+    border: 1px solid #ddd;
+    padding: 5px; /* Adjust padding as needed */
+    text-align: center;
+}
+
+.policy-table th {
+    background-color: #235e8f;
+    font-size: 14px;
+    color: white;
+}
+.policy-table td {
+    font-size: 14px;
+}
+.policy-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+.action-button {
+    padding: 5px 10px;
+    margin-right: 5px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+}
+.action-button.view{
+    background-color: #227cb9;
+}
+.action-button.provide{
+    background-color: #26a662;
+    animation: blink 2s infinite alternate; 
+}
+.action-button.view:hover{
+    background-color: #0f5787;
+}
+
+.action-button.provide:hover{
+    background-color: #158549;
+    animation: blink 2s infinite alternate; 
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; } /* Fully visible */
+    50% { opacity: 0; } /* Invisible */
+}
+ .create-policy-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right; /* Align to the right */
+            margin-top: 20px; /* Add margin from the top */
+            margin-right: 150px; /* Add margin from the right */
+        }
+
+        .create-policy-button:hover {
+            background-color: #45a049;
+        }
+.policy-table {
+    margin: 10px auto;
+    width: 90%; /* Adjust the width as needed */
+    max-width: 1000px;
+}
+
+.policy{
+    margin-top: 100px;
+}
+@media (max-width: 750px) {
+    .create-policy-button {
+        float: none; /* Remove float */
+        width: 30%;
+        margin: 10px auto; /* Center the button with margin */
+        display: block; /* Display as a block to center */
+        margin-right: auto; /* Remove right margin to center horizontally */
+        text-align: center;
+    }
+
+    .policy {
+        margin: 20px;
+    }
+
+    .policy-table th,
+    .policy-table td {
+        font-size: 14px; /* Adjust font size for table header and content */
+    }
+
+    .policy-table th {
+        font-size: 14px; /* Adjust font size for table header */
+    }
+}

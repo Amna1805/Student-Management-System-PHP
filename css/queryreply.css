@@ -1,0 +1,108 @@
+.create-query-form {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff; /* Form background color */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 50px;
+}
+
+.create-query-form h2 {
+    margin-bottom: 20px;
+    text-align: center;
+    color: #003b80;
+}
+
+.form-group textarea::placeholder,
+input::placeholder {
+    font-size:12px;
+}
+.form-group textarea{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    height: 250px; /* Adjust the height to your preference */
+    box-sizing: border-box;
+    font-size: 13px;
+}
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    
+}
+
+.form-group input,
+.form-group select {
+    width: calc(100% - 12px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.form-group input[type="file"] {
+    padding: 5px;
+}
+.create-button {
+    display: block;
+    margin: 0 auto;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-weight: bold;
+}
+.create-button.create-button{
+    background-color: #28a745;
+}
+.create-query-form button.create-button.create:hover {
+    background-color: #218838;
+}
+.create-button.update-button{
+    background-color: #28a745;
+}
+.create-query-form button.create-button.update:hover {
+    background-color: #218838;
+}
+
+.create-button.delete{
+    background-color: #e03913;
+}
+.create-query-form button.create-button.delete:hover {
+    background-color: #b23215;
+}
+/* Add more styles as needed */
+@media (max-width: 950px) {
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-group {
+        margin-right: 0;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    .create-query-form {
+        margin: 50px;
+    }
+}

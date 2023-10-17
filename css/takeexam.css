@@ -1,0 +1,138 @@
+.exam-info-section {
+    padding: 20px;
+    text-align: left;
+    margin: 0;
+}
+.exam-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px;
+}
+.time-remaining{
+    font-weight: 700;
+}
+.red-text {
+    color: red;
+    
+}
+
+.exam-info-heading {
+    color: #003b80;
+    font-size: 20px;
+    width:50%;
+}
+.student-info-heading {
+    flex-grow: 1;
+    color: #1c67bb;
+    font-size: 14px;
+}
+.exam-mcqs {
+    font-size: 16px;
+    margin: 50px;
+    margin-bottom: 0;
+    background-color: #e6eff6c2;
+    border-radius: 50px;
+    padding: 50px;
+}
+
+.mcq {
+    margin-bottom: 10px;
+}
+
+.mcq p {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.mcq input[type="radio"] {
+    margin-right: 10px;
+}
+
+.mcq label {
+    font-size: 16px;
+}
+
+.mcq label:hover {
+    cursor: pointer;
+}
+.submit-button {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto; /* Adjust margin as needed */
+}
+
+.submit-button button{
+    padding: 10px 20px;
+    background-color: #227cb9; /* Blue color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.submit-button button:hover {
+    background-color: #0e5f96; /* Darker Blue on hover */
+}
+.green-text
+{
+    color:green
+}
+
+/* Add this CSS to your existing CSS file or link a new CSS file */
+
+.remarks-section {
+    margin:50px;
+}
+
+.remarks-section label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.remarks-section textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    resize: vertical; /* Allow vertical resizing of textarea */
+}
+
+@media (max-width: 768px) {
+    .exam-mcqs {
+        font-size: 14px;
+    }
+    .exam-info-heading {
+        font-size: 16px;
+        flex-direction: column;
+        margin-bottom: 10px;
+    }
+    .student-info-heading {
+        font-size: 14px;
+        flex-direction: column;
+        margin-bottom: 10px;
+    }
+    .exam-mcqs {
+        margin: 30px;
+        margin-bottom: 0;
+    }
+    .exam-info {
+        flex-direction: column;
+        text-align: center; /* Center align for smaller screens */
+        align-items: center; /* Center align for smaller screens */
+    }
+    .mcq p {
+       
+        font-size: 14px;
+    }
+    .mcq label {
+        font-size: 14px;
+    }
+    
+}

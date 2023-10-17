@@ -1,0 +1,194 @@
+.image-with-text {
+    text-align: center;
+    height: 40vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.image-with-text .overlay {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.image-with-text img {
+    width: 100%;
+    height: 100%;
+
+}
+
+.image-text-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    color: white;
+    text-align: center;
+
+}
+.student-information h6 {
+    font-size: 30px;
+    font-weight: 800;
+    color: #003b80;
+    margin: 35px;
+}
+.student-information p{
+    font-weight: 800;
+    color: #0860e3;
+    margin: 35px;
+}
+.responsivetable
+{
+    overflow-x: auto;
+}
+
+.student-information h6{
+    font-size: 24px;
+}
+.student-table {
+    margin: 10px auto;
+    width: 90%; /* Adjust the width as needed */
+    max-width: 1000px;
+    
+}
+.student-information table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+   
+}
+.student-information td {
+    font-size: 14px;
+}
+.student-information th, .student-information td {
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: center;
+}
+
+.student-table td{
+    font-size: 12px;
+}
+
+.student-information th {
+    background-color: #235e8f;
+    font-size: 14px;
+    color: white;
+}
+
+.student-information tbody tr:hover {
+    background-color: #f9f9f9;
+}
+.student-information td:nth-child(4) {
+    font-weight: bold;
+}
+
+
+
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+
+.action-button {
+    padding: 5px 10px;
+    margin-right: 5px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+}
+.action-button.view{
+    background-color: #227cb9;
+}
+.action-button.delete{
+    background-color: #e03913;
+}
+.action-button.update{
+    background-color: #26a662;
+}
+.action-button.view:hover{
+    background-color: #0f5787;
+}
+.action-button.delete:hover{
+    background-color: #b23215;
+}
+.action-button.update:hover{
+    background-color: #158549;
+}
+.action-button.monitor{
+    background-color: #0335d9;
+
+}
+.action-button.monitor:hover{
+    background-color: #0e277a;
+}
+
+
+
+.create-course-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right; /* Align to the right */
+    margin-top: 20px; /* Add margin from the top */
+    margin-right: 150px; /* Add margin from the right */
+}
+
+.create-course-button:hover {
+    background-color: #45a049;
+}
+.student-information
+{
+    margin-top: 100px;
+    text-align: center;
+}
+.green
+{
+    color:green;
+}
+.red{
+    color: red;
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; } /* Fully visible */
+    50% { opacity: 0; } /* Invisible */
+}
+@media (max-width: 768px) {
+    .create-course-button {
+        float: none; /* Remove float */
+        width: 30%;
+        margin: 10px auto; /* Center the button with margin */
+        display: block; /* Display as a block to center */
+        margin-right: auto; /* Remove right margin to center horizontally */
+        text-align: center;
+    }
+    .student-information {
+        margin-top: 20px; /* Adjust top margin */
+    }
+    .student-table {
+        margin: 20px;
+    }
+    .student-information th, .student-information td {
+        padding: 8px; /* Adjust padding as needed */
+        text-align: center;
+    }
+    .student-information th, .student-information td {
+        font-size: 12px;
+        white-space: nowrap;
+    }
+}

@@ -1,0 +1,225 @@
+.image-with-text {
+    text-align: center;
+    height: 40vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.image-with-text .overlay {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.image-with-text img {
+    width: 100%;
+    height: 100%;
+
+}
+
+.image-text-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    color: white;
+    text-align: center;
+
+}
+
+.image-text {
+    margin: 10px 0;
+}
+.feature-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 50px;
+}
+
+.feature-box {
+    text-align: center;
+    position: relative;
+    margin: 20px;
+    cursor: pointer;
+}
+
+.feature-text {
+    font-weight: bold;
+    margin-bottom: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(114, 14, 14, 0.4);
+    color: white;
+    padding: 10px;
+}
+
+.feature-box img {
+    width: 300px; /* Ensure the image fits within the box */
+    height: 200px; /* Ensure the image fits within the box */
+    border-radius: 20px;
+    object-fit: cover;
+   
+}
+.feature-box:hover img {
+    transform: scale(1.1); 
+    z-index: 1;/* Scale the image slightly on hover */
+}
+.feature-box:hover .feature-text {
+    z-index: 2;/* Move it to its original position on hover */
+}
+
+@media (max-width: 767px) {
+    .feature-container {
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+    .feature-box {
+        flex: 0 0 20%; /* Two boxes in one row with a little spacing */
+        margin: 15px 0;
+    }
+    .feature-box img {
+        width: 200px; /* Adjust image to take full width */
+        max-width: 75%; 
+        height: 150px;/* Ensure the image fits within the box */
+    }
+}
+
+@media (max-width: 980px) {
+   
+    .feature-box {
+        width: 85%; /* Adjust width for better visibility */
+        margin: 20px auto; /* Center the box */
+    }
+    
+    .feature-text {
+        top: 50%; /* Adjust the positioning of the text */
+    }
+
+    .feature-box img {
+        max-width: 200px;
+        height: 150px; /* Maintain aspect ratio */
+    }
+}
+
+
+
+.courses {
+    margin: 50px;
+}
+.courses h6 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #003b80;
+    margin: 35px;
+}
+.cards {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 20px;
+}
+
+.card {
+    width: 30%; /* Adjust the width to fit three cards in one row */
+    margin: 10px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    text-align: center;
+    border-radius: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Add a transparent overlay */
+    &::after {
+        content: ''; /* Required for pseudo-element */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0); /* Transparent background */
+        transition: background 0.3s ease; /* Transition for smooth effect */
+        z-index: 2; /* Ensure the overlay is on top of the image and text */
+    }
+
+    /* Style for "View Details" text */
+    &::before {
+        content: 'View Details';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 16px;
+        opacity: 0; /* Initially hidden */
+        transition: opacity 0.3s ease; /* Transition for smooth effect */
+        z-index: 3; /* Ensure the text is on top of the overlay */
+    }
+
+    &:hover::after {
+        background: rgba(0, 0, 0, 0.5); /* Change overlay color on hover */
+    }
+
+    &:hover::before {
+        opacity: 1; /* Make the text visible on hover */
+    }
+}
+
+.card:hover {
+    transform: translateY(-5px);
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+}
+.card img {
+    width: 250px;
+    height: 150px;
+    margin-bottom: 10px;
+    object-fit: cover;
+}
+
+.card p {
+    font-size: small;
+    padding-bottom: 20px;
+    margin: 0;
+    color: black;
+}
+.card h3{
+    font-size: medium;
+    padding-bottom: 20px;
+    margin: 0;
+    color: black;
+}
+
+
+
+@media (max-width: 950px) {
+   
+    .cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card {
+        width: 100%;
+    }
+
+    .card img {
+        width: 150px;
+        height: 150px;
+    }
+
+}

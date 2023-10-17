@@ -1,0 +1,108 @@
+.chat-container {
+    max-width: 400px;
+    padding: 20px;
+    background-color: aliceblue;
+    border-radius: 20px;
+    position: fixed;
+    bottom: 10px;
+    right: 10px; /* Moved to the right */
+    z-index: 100;
+}
+.close-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: black;
+}
+.messages {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height:350px; /* Set a specific height for the messages container */
+}
+
+/* Rest of your styles for incoming, outgoing, and message-input */
+
+.message {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    max-width: 70%;
+}
+
+.incoming {
+    background-color: #e0e0e0;
+    align-self: flex-start;
+}
+
+.outgoing {
+    background-color: #dcf8c6;
+    align-self: flex-end;
+}
+
+.message-input {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.message-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.message-input button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4caf50;
+    color: white;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.message-input button:hover {
+    background-color: #45a049;
+}
+/* Your existing styles */
+
+/* Styles for small screens */
+@media (max-width: 950px) {
+    .chat-container {
+        max-width: 90%; /* Adjust the width for small screens */
+        border-radius: 10px; /* Adjust border radius */
+        bottom: 5px; /* Adjust bottom spacing */
+        right: 5px; /* Adjust right spacing */
+    }
+
+    .close-icon {
+        top: 5px; /* Adjust top spacing for the close icon */
+        right: 5px; /* Adjust right spacing for the close icon */
+    }
+
+    .messages {
+        max-height: 200px; /* Adjust max height for the messages container */
+    }
+
+    .message {
+        padding: 8px; /* Adjust padding for messages */
+        font-size: 14px; /* Adjust font size for messages */
+    }
+
+    .message-input {
+        margin-top: 10px; /* Adjust top margin for message input */
+    }
+
+    .message-input input {
+        padding: 8px; /* Adjust padding for the input */
+        font-size: 14px; /* Adjust font size for the input */
+    }
+
+    .message-input button {
+        padding: 8px 15px; /* Adjust padding for the button */
+        font-size: 14px; /* Adjust font size for the button */
+    }
+}

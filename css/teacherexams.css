@@ -1,0 +1,159 @@
+
+.exam-information h6 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #003b80;
+    margin: 35px;
+}
+.responsivetable
+{
+    overflow-x: auto;
+}
+
+
+.exam-table {
+    margin: 10px auto;
+    width: 90%; /* Adjust the width as needed */
+    max-width: 1000px;
+    
+}
+.exam-information table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+   
+}
+.exam-information td {
+    font-size: 14px;
+}
+.exam-information th, .exam-information td {
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: center;
+}
+
+.exam-table td{
+    font-size: 12px;
+}
+
+.exam-information th {
+    background-color: #235e8f;
+    font-size: 14px;
+    color: white;
+}
+
+.exam-information tbody tr:hover {
+    background-color: #f9f9f9;
+}
+.exam-information td:nth-child(4) {
+    font-weight: bold;
+}
+
+
+
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+
+.action-button {
+    padding: 5px 10px;
+    margin-right: 5px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+}
+.action-button.view{
+    background-color: #227cb9;
+}
+.action-button.delete{
+    background-color: #e03913;
+}
+.action-button.update{
+    background-color: #26a662;
+}
+.action-button.view:hover{
+    background-color: #0f5787;
+}
+.action-button.delete:hover{
+    background-color: #b23215;
+}
+.action-button.update:hover{
+    background-color: #158549;
+}
+.action-button.post{
+    background-color: #17a299;
+    animation: blink 2s infinite alternate; 
+}
+.action-button.post:hover{
+    background-color: #15857e;
+}
+.action-button.grade{
+    background-color: #17a299;
+    animation: blink 2s infinite alternate; 
+}
+.action-button.grade:hover{
+    background-color: #15857e;
+}
+.create-course-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right; /* Align to the right */
+    margin-top: 20px; /* Add margin from the top */
+    margin-right: 150px; /* Add margin from the right */
+}
+
+.create-course-button:hover {
+    background-color: #45a049;
+}
+.exam-information
+{
+    margin-top: 100px;
+    text-align: center;
+}
+.green
+{
+    color:green;
+}
+.red{
+    color: red;
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; } /* Fully visible */
+    50% { opacity: 0; } /* Invisible */
+}
+@media (max-width: 768px) {
+    .create-course-button {
+        float: none; /* Remove float */
+        width: 30%;
+        margin: 10px auto; /* Center the button with margin */
+        display: block; /* Display as a block to center */
+        margin-right: auto; /* Remove right margin to center horizontally */
+        text-align: center;
+    }
+    .exam-information {
+        margin-top: 20px; /* Adjust top margin */
+    }
+    .exam-table {
+        margin: 20px;
+    }
+    .exam-information th, .exam-information td {
+        padding: 8px; /* Adjust padding as needed */
+        text-align: center;
+    }
+    .exam-information th, .exam-information td {
+        font-size: 12px;
+        white-space: nowrap;
+    }
+}

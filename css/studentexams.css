@@ -1,0 +1,100 @@
+.exam-information h6 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #003b80;
+    margin: 35px;
+}
+.responsivetable
+{
+    overflow-x: auto;
+}
+
+
+.exam-table {
+    margin: 10px auto;
+    width: 90%; /* Adjust the width as needed */
+    max-width: 1000px;
+    
+}
+.exam-information table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+   
+}
+.exam-information td {
+    font-size: 14px;
+}
+.exam-information th, .exam-information td {
+    border: 1px solid #ddd;
+    padding: 5px;
+    text-align: center;
+}
+
+.exam-table td{
+    font-size: 12px;
+}
+
+.exam-information th {
+    background-color: #235e8f;
+    font-size: 14px;
+    color: white;
+}
+
+.exam-information tbody tr:hover {
+    background-color: #f9f9f9;
+}
+.exam-information td:nth-child(4) {
+    font-weight: bold;
+}
+
+/* Styles for the status buttons */
+.status-button {
+    border: none;
+    padding: 5px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    border-radius: 25px;
+    width: 100px;
+}
+
+.status-button.completed {
+    background-color: #28a745; /* Green for completed */
+    color: white;
+}
+.status-button.expire {
+    background-color: #FF5733; /* Red for due */
+    color: white;
+}
+.status-button.due {
+    background-color: #3498db; /* Blue for due */
+    color: white;
+    animation: blink 2s infinite; /* Blink effect for due exams */
+    width: fit-content;
+    cursor: pointer;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+@media (max-width: 768px) {
+    .exam-table {
+        margin: 20px;
+    }
+    .exam-information th, .exam-information td {
+        padding: 5px; /* Adjust padding as needed */
+        text-align: center;
+    }
+    .exam-information th, .exam-information td {
+        font-size: 14px;
+        white-space: nowrap;
+    }
+}

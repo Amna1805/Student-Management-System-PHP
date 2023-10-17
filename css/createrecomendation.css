@@ -1,0 +1,92 @@
+/* Style for the form container */
+.create-recomendation-form {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff; /* Form background color */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 50px;
+}
+
+/* Style for headings */
+.create-recomendation-form h2 {
+    margin-bottom: 20px;
+    text-align: center;
+    color: #003b80;
+}
+
+/* Style for form groups */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* Optional: Add styles for the options */
+.form-group select option {
+    padding: 10px;
+}
+
+.create-button {
+    display: block;
+    margin: 0 auto;
+    color: #fff;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-weight: bold;
+}
+.create-button.create-button{
+    background-color: #28a745;
+}
+.create-course-form button.create-button.create:hover {
+    background-color: #218838;
+}
+.create-button.update-button{
+    background-color: #28a745;
+}
+.create-course-form button.create-button.update:hover {
+    background-color: #218838;
+}
+
+.create-button.delete{
+    background-color: #e03913;
+}
+.create-course-form button.create-button.delete:hover {
+    background-color: #b23215;
+}
+/* Add more styles as needed */
+/* Media query for small screens */
+@media (max-width: 767px) {
+    .create-recomendation-form {
+        max-width: 80%; /* Adjust the width for small screens */
+        margin: 80px; /* Center the form */
+        padding: 10px; /* Adjust the padding */
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%; /* Full width on small screens */
+    }
+}

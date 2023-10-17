@@ -1,0 +1,121 @@
+
+/* Style the login container */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 100px;
+}
+.welcome h1{
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+.welcome p{
+    font-size: 14px;
+    margin-bottom: 15px; 
+}
+/* Style the login form */
+.login-form {
+    max-width: 400px; 
+    background-color: #fff; /* Form background color */
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); /* Add a box shadow */
+    width: 100%; /* Ensure the form takes the full width of its container */
+    box-sizing: border-box; /* Include padding and border in width calculation */
+    overflow: hidden; /* Hide horizontal overflow if any */
+}
+
+/* Add spacing between form elements */
+.form-group {
+    margin: 15px 0;
+    text-align: left; /* Align labels to the left */
+}
+
+/* Style form elements */
+.form-group label {
+    display: block;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px; /* Add margin below labels */
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px; /* Add margin below input fields */
+    padding-right: 35px; /* Add space for the eye icon */
+    box-sizing: border-box; /* Include padding and border in width calculation */
+}
+
+/* Style the password eye icon */
+input[type="password"]::after {
+    content: "\f06e"; /* Unicode for an eye icon */
+    font-family: FontAwesome;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #999;
+}
+.password-input {
+    position: relative;
+}
+.eye-icon {
+    position: absolute;
+    top: 30%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    user-select: none;
+}
+/* Change the eye icon color on hover */
+input[type="password"]:hover::after {
+    color: #333;
+}
+
+.forgot-password a {
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    display: block; /* Make the link a block-level element */
+    margin-top: 10px; /* Add margin above the forgot password link */
+}
+
+/* Style the login button */
+.login-button button {
+    background-color: #0056b3; /* Change button color */
+    color: #fff;
+    border: none;
+    padding: 10px 30px; /* Wider button */
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px; /* Add more margin above the login button */
+    font-weight: bold;
+}
+
+.login-button button:hover {
+    background-color: #003b80; /* Darker color on hover */
+}
+
+/* Style the "Or Sign Up Using" divider */
+.or-divider {
+    margin: 15px 0;
+}
+
+
+/* Style the "Don't have an account?" link */
+.signup-link {
+    margin-top: 20px;
+}
+
+.signup-link a {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: bold;
+}

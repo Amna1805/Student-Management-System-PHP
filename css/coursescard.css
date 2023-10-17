@@ -1,0 +1,112 @@
+.courses {
+    margin: 50px;
+}
+.courses h6 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #003b80;
+    margin: 35px;
+}
+.cards {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 20px;
+}
+
+.card {
+    width: 30%; /* Adjust the width to fit three cards in one row */
+    margin: 10px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    text-align: center;
+    border-radius: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Add a transparent overlay */
+    &::after {
+        content: ''; /* Required for pseudo-element */
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0); /* Transparent background */
+        transition: background 0.3s ease; /* Transition for smooth effect */
+        z-index: 2; /* Ensure the overlay is on top of the image and text */
+    }
+
+    /* Style for "View Details" text */
+    &::before {
+        content: 'View Details';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 16px;
+        opacity: 0; /* Initially hidden */
+        transition: opacity 0.3s ease; /* Transition for smooth effect */
+        z-index: 3; /* Ensure the text is on top of the overlay */
+    }
+
+    &:hover::after {
+        background: rgba(0, 0, 0, 0.5); /* Change overlay color on hover */
+    }
+
+    &:hover::before {
+        opacity: 1; /* Make the text visible on hover */
+    }
+}
+
+.card:hover {
+    transform: translateY(-5px);
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+}
+.card img {
+    width: 250px;
+    height: 150px;
+    margin-bottom: 10px;
+    object-fit: cover;
+}
+
+.card p {
+    font-size: small;
+    padding-bottom: 20px;
+    margin: 0;
+    color: black;
+}
+.card h3{
+    font-size: medium;
+    padding-bottom: 20px;
+    margin: 0;
+    color: black;
+}
+
+
+
+@media (max-width: 950px) {
+   
+    .cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card {
+        width: 100%;
+    }
+
+    .card img {
+        width: 150px;
+        height: 150px;
+    }
+
+}

@@ -1,0 +1,114 @@
+.myBtn {
+    position: fixed;
+    bottom: 10px;
+    right: 10px; /* Moved to the right */
+    z-index: 100;
+    padding: 10px 20px; /* Added some padding for a better look */
+    background-color: #3498db; /* Changed button background color */
+    color: white; /* Changed text color */
+    border: none; /* Removed border */
+    border-radius: 50px; /* Rounded corners */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  
+  .myBtn .icon {
+    background-image: url('../images/chat.png'); /* Replace 'path_to_chat_icon.png' with the actual path to your chat icon */
+    width: 20px; /* Adjust icon width */
+    height: 20px; /* Adjust icon height */
+    background-size: cover;
+    margin-right: 10px; /* Added some space between icon and text */
+  }
+.item1 { grid-area: program; }
+.item2 { grid-area: course; }
+.item3 { grid-area: student; }
+.item4 { grid-area: subject; }
+
+.grid-container {
+    display: grid;
+    grid-template-areas:
+      'overall overall overall overall'
+      'program course student subject'
+      'piechart piechart barchart barchart'
+      'piechart piechart barchart barchart'
+      'examination examination examination examination';
+    gap: 10px;
+    background-color: #ffffff;
+    padding: 10px;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 1280px) {
+    .grid-container {
+      grid-template-areas:
+        'overall overall'
+        'program course'
+        'student subject'
+        'piechart piechart'
+        'barchart barchart'
+        'examination examination';
+        margin: 50px;
+    }
+  }
+  
+.grid-container > div {
+  background-color: rgb(179, 208, 210);
+  text-align: center;
+  padding: 20px 0;
+  font-size: 20px;
+  border-radius: 2%;
+}
+
+
+  .image-container {
+    display: flex;
+    justify-content: center;
+}
+
+
+.image-container .item5 img,
+.image-container .item6 img {
+  margin: 20px;
+    width: 400px; /* Make the images fill their containers */
+   height: 300px; /* Maintain aspect ratio */
+}
+/* ... (previous styles) ... */
+
+/* For smaller screens, display one image per row and center it */
+@media (max-width: 850px) {
+  .image-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Center items horizontally */
+  }
+
+  .image-container .item5,
+  .image-container .item6 {
+      margin: 20px 0; /* Adjust margin as needed */
+  }
+
+  .image-container .item5 img,
+  .image-container .item6 img {
+      width: 400px; /* Adjust image width */
+      height: auto; /* Maintain aspect ratio */
+  }
+}
+select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  background-color: white;
+  color: #333;
+}
+
+/* Optional: Add styles for the options */
+select option {
+  padding: 5px;
+}
+
+/* Optional: Add hover effect for options */
+select option:hover {
+  background-color: #f0f0f0;
+}

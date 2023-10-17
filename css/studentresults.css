@@ -1,0 +1,102 @@
+.results {
+    position: relative;
+}
+.view-all {
+    position: absolute;
+    top: 12%;
+    right: 12%;
+    font-size: 14px;
+    color: black;
+    cursor: pointer;
+}
+.view-all i{
+    font-size: 14px;
+}
+.results h6 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #003b80;
+    margin: 35px;
+}
+.image-text {
+    margin: 10px 0;
+}
+
+.responsivetable
+{
+    overflow-x: auto;
+}
+.resultstable {
+    margin: 10px auto;
+    width: 90%; /* Adjust the width as needed */
+    max-width: 1000px;
+    
+}
+
+.resultstable table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+
+}
+
+.resultstable th, .resultstable td {
+    border: 1px solid #ddd;
+    padding: 10px; /* Adjust padding as needed */
+    text-align: center;
+}
+.resultstable td {
+    font-size: 14px;
+}
+.resultstable th {
+    background-color: #235e8f;
+    font-size: 14px;
+    color: white;
+}
+
+.resultstable tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Style the Overall CGPA row */
+.resultstable tbody tr:last-child td {
+    background-color: #71a6d2;
+    color:black;
+    font-weight: bold;
+}
+.view-more {
+    text-align: center;
+    margin-top: 50px;
+    cursor: pointer;
+}
+
+.view-more span {
+    margin-right: 10px;
+}
+
+.view-more i {
+    font-size: 20px;
+}
+/* Define the margin for smaller screens */
+@media (max-width: 768px) {
+    .resultstable {
+        margin: 20px;
+    }
+    .resultstable th, .resultstable td {
+        padding: 5px; /* Adjust padding as needed */
+        text-align: center;
+    }
+    .resultstable td, .resultstable th {
+        font-size: 12px;
+        white-space: nowrap;
+    }
+    .view-all {
+        position: static;
+        display: block;
+        margin: 0 auto; /* Center the "View all" link */
+        text-align: center; /* Center the text within the link */
+        margin-top: 10px; /* Adjust the top margin as needed */
+        right: auto; /* Reset the right positioning */
+    }
+    
+}

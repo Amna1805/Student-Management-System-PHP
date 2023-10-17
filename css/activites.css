@@ -1,0 +1,24 @@
+.activity-filter {
+    display: flex;
+    flex-direction: row;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right; /* Align to the right */
+    margin-top: 20px; /* Add margin from the top */
+    margin-right: 150px; /* Add margin from the right */
+}
+
+.activity-filter label {
+    margin: 10px;
+}
+
+.activity-filter select {
+    text-decoration: none;
+    font-size: 12px; /* Adjust the font size as needed */
+}
+
+.user-activity {
+    margin-top: 20px; /* Add margin to separate the activity section from the filter */
+}

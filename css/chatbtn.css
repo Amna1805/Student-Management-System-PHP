@@ -1,0 +1,22 @@
+.myBtn {
+    position: fixed;
+    bottom: 10px;
+    right: 10px; /* Moved to the right */
+    z-index: 100;
+    padding: 10px 20px; /* Added some padding for a better look */
+    background-color: #3498db; /* Changed button background color */
+    color: white; /* Changed text color */
+    border: none; /* Removed border */
+    border-radius: 50px; /* Rounded corners */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  
+  .myBtn .icon {
+    background-image: url('../images/chat.png'); /* Replace 'path_to_chat_icon.png' with the actual path to your chat icon */
+    width: 20px; /* Adjust icon width */
+    height: 20px; /* Adjust icon height */
+    background-size: cover;
+    margin-right: 10px; /* Added some space between icon and text */
+  }

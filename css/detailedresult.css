@@ -1,0 +1,202 @@
+body,
+h1,
+h2,
+h3,
+p,
+ul,
+li,
+table {
+  margin: 0;
+  padding: 0;
+}
+body{
+    background-color: #8888881a;
+}
+
+
+/* Define some base styles */
+
+
+.Detail_container {
+  background-color: #edeaea30;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.coursename h1 {
+  font-size: 30px;
+  color: #003b80;
+  margin-bottom: 15px;
+}
+
+.student_nameroll p {
+  font-size: 16px;
+  color: rgb(208, 22, 22);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.Tests h2,
+.Assignments h2 {
+  font-size: 24px;
+  color: #003b80;
+  margin-bottom: 10px;
+}
+.Tests,
+.Assignments {
+    border: 1px solid #fff;
+    border-radius: 5px;
+    padding: 20px;
+    background-color: #bcbbbb45;
+    margin-bottom: 20px;
+}
+
+/* Styling for Test and Assignment sections */
+.Test,
+.Assignment {
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+}
+th{
+    background-color: #003b80;
+    color: #f0f0f0;
+}
+td{
+    background-color: rgba(127, 255, 212, 0.046);
+}
+
+.test_remarks,
+.Assignment_remarks {
+  margin-top: 10px;
+}
+
+
+.note p {
+  font-size: 16px;
+  color: #b12d2d;
+  margin-top: 10px;
+}
+
+/* Style the options as buttons */
+.test_remarks p,
+.Assignment_remarks p {
+    display: inline-block;
+    padding: 5px 10px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    text-align: center;
+    transition: all 0.2s; /* Add a smooth transition effect */
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    font-size: 13px;
+    margin: 4px 2px;
+    border-radius: 25px;
+    width: 100px;
+  }
+  
+  /* Style the colors for each option */
+  .excellent {
+    background-color: #28a745;
+    color: white;
+
+  }
+  
+  .good {
+    background-color: rgb(234, 255, 1);
+    color: rgb(0, 0, 0); /* You can adjust the text color */
+  }
+  
+  .improve {
+    background-color: #f02121;
+    color: white;
+    width: 300px;
+  }
+  
+  /* Add a shadow and outer border to the active class */
+  .test_remarks p:hover,
+  .Assignment_remarks p:hover {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+  
+.test_remarks,
+.Assignment_remarks {
+    width: 250px; /* Adjust the width as needed */
+    
+}
+
+
+/* Style the Test and Assignment sections for consistency */
+.Tests .Test,
+.Assignments .Assignment {
+  background-color: #f9f9f9;
+  overflow: auto;
+}
+
+/* Style the h3 headings within Test and Assignment sections */
+.Tests .Test h3,
+.Assignments .Assignment h3 {
+  font-size: 18px;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+/* Style the container for multiple Test and Assignment sections */
+.Tests .three-tests,
+.Assignments .three-assignments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.361);
+  overflow-x: auto;
+}
+
+/* Style the labels for "Name" and "Registration Number" */
+.student_nameroll strong {
+  font-weight: bold;
+  color: #043063;
+  margin-right: 5px;
+}
+
+
+
+.three-tests,
+.three-assignments {
+    border: 1px solid rgba(89, 103, 107, 0.473); /* Add border and set color */
+    background-color: rgba(89, 103, 107, 0.473); /* Set background color */
+    border-radius: 5px;
+    padding: 10px; /* Add some padding for spacing */
+}
+
+
+@media screen and (max-width: 768px) {
+    th,
+    td {
+      font-size: 12px; /* Adjust the font size as needed */
+    }
+    .note p{
+        font-size: 14px;
+    }
+  }
+  

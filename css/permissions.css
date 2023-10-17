@@ -1,0 +1,109 @@
+.officer-section {
+    padding: 20px;
+    margin-left: 120px;
+    margin-top: 20px;
+
+}
+.heading{
+    text-align: center;
+    margin-top:10px;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+.officer-section h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #003b80;
+}
+
+.officer-section p {
+    margin: 5px 0;
+    
+}
+.responsivetable
+{
+    overflow-x: auto;
+}
+
+/* .student-table {
+   
+    
+} */
+.student-information table {
+    margin: 10px auto;
+    width: 90%; /* Adjust the width as needed */
+    max-width: 1000px;
+   
+}
+.student-information td {
+    font-size: 14px;
+}
+.student-information th, .student-information td {
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: center;
+}
+
+.student-table td{
+    font-size: 12px;
+}
+
+.student-information th {
+    background-color: #235e8f;
+    font-size: 14px;
+    color: white;
+}
+
+.student-information tbody tr:hover {
+    background-color: #f9f9f9;
+}
+.student-information td:nth-child(4) {
+    font-weight: bold;
+}
+.button-container {
+    text-align: center;
+    margin-top: 20px; /* Adjust margin as needed */
+}
+.edit-button {
+    padding: 10px 20px;
+    margin: 10px;
+    background-color: #227cb9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+@media (max-width: 768px) {
+    .student-information {
+        margin-top: 10px; /* Adjust top margin */
+    }
+    .student-table {
+        margin: 20px;
+    }
+    .student-information th, .student-information td {
+        padding: 8px; /* Adjust padding as needed */
+        text-align: center;
+    }
+    .student-information th, .student-information td {
+        font-size: 12px;
+        white-space: nowrap;
+    }
+    .heading{
+        font-size: 20px;
+    }
+    .officer-section {
+        margin: 0 auto; /* This centers the section horizontally */
+        max-width: 80%; /* Adjust the maximum width as needed */
+        text-align: center; /* Center the text inside the section */
+    }
+}
+
+@media (max-width: 950px) {
+    .officer-section {
+        margin: 0 auto; /* This centers the section horizontally */
+        max-width: 80%; /* Adjust the maximum width as needed */
+        text-align: center; /* Center the text inside the section */
+    }
+    
+}
