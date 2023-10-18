@@ -50,7 +50,7 @@ if(isset($_POST['submit_contact'])) {
 <body>
       <!-- Contact Us Form -->
       <div class="contactus-container">
-        <form class="contactus-form" onsubmit="return validateForm();">
+        <form class="contactus-form" onsubmit="return validateForm();" method="POST">
             <div class="contact-Intro">
                 <h3>Contact Us</h3>
                 <p>Reach us out in simple steps</p>
@@ -74,9 +74,7 @@ if(isset($_POST['submit_contact'])) {
                     placeholder="Describe your Issue" required></textarea>
             </div>
             <div class="submit-button">
-                <button type="submit" name="submit_contact">Sumbit</button>
-            </div>
-        </form>
+                <button type="submit">
     </div>
 </body>
 </html>

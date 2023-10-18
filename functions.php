@@ -1,8 +1,9 @@
 <?php
+include_once('config.php');
 // require_once('send_mail.php'); 
 function user_login() {
 	$db = $GLOBALS['db'];
-	$email = mysqli_real_escape_string($db, $_POST['login_email']);
+	$email = mysqli_real_escape_string($db, $_POST['login_id']);
 	$pass = mysqli_real_escape_string($db, $_POST['login_password']);
 
 
@@ -221,9 +222,15 @@ function submit_contact(){
 	$name = mysqli_real_escape_string($db, $_POST['name']);
 	$email = mysqli_real_escape_string($db, $_POST['email']);
 	$question = mysqli_real_escape_string($db, $_POST['question']);
-	if( !empty($name) && !empty($email) && !empty($question) ){
-		$insert_user = mysqli_query($db, "INSERT INTO `inquiry` (`inq_sender_name	` , `	inq_sender-query	` , `sender_email` , ) VALUES ('{$name}' ,'{$msg}', '{$email}' , )");
-	}
+	if (!empty($name) && !empty($email) && !empty($question)) {
+        $insert_user = mysqli_query($db, "INSERT INTO `inquiry` (`inq_sender_name`, `inq_sender_query`, `sender_email`) VALUES ('$name', '$question', '$email')");
+        if ($insert_user) {
+            echo '<script>alert("Record inserted successfully.");</script>';
+        } else {
+            echo "Error: " . mysqli_error($db);
+        }
+    }
+    
 }
 function upload_image() {
     $db = $GLOBALS['db'];

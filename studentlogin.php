@@ -1,6 +1,9 @@
 <?php 
-include_once('header.php'); ?>
-
+include_once('header.php'); 
+include_once('functions.php'); 
+if(isset($_POST['login-submit'])) {
+    user_login();
+}?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,10 +12,42 @@ include_once('header.php'); ?>
     <link rel="stylesheet" type="text/css" href="css/home.css">
     <link rel="stylesheet" type="text/css" href="css/login.css">
     <title>Document</title>
+    <script type="text/javascript">
+        function validateForm() {
+            // Get form values
+            var name = document.getElementById("name").value;
+            var email = document.getElementById("email").value;
+            var question = document.getElementById("question").value;
+
+            // Validate name (only alphabets and spaces)
+            var nameRegex = /^[a-zA-Z\s]+$/;
+            if (!nameRegex.test(name.trim())) {
+                alert("Please enter a valid name (only alphabets and spaces).");
+                return false;
+            }
+
+            // Validate email
+            var emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!emailRegex.test(email.trim())) {
+                alert("Please enter a valid email address.");
+                return false;
+            }
+
+            // Validate question
+            if (question.trim() === "") {
+                alert("Please describe your issue.");
+                return false;
+            }
+
+            // You can add more specific validations if needed
+
+            return true;
+        }
+    </script>
 </head>
 <body>
 <div class="login-container">
-        <form class="login-form">
+        <form class="login-form" method="POST" onsubmit="return validateForm();">
             <div class="welcome">
                 <h1 class="welcome-text">Welcome Back!</h1>
                 <p style="margin-top: -10px;">Login below or Create Account</p>
@@ -20,7 +55,7 @@ include_once('header.php'); ?>
 
             <div class="form-group">
                 <label for="username">Registration No</label>
-                <input type="text" id="regno" name="regno" placeholder="Type your Registration No" required>
+                <input type="text" id="regno" name="login_id" placeholder="Type your Registration No" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
@@ -35,7 +70,7 @@ include_once('header.php'); ?>
                 <a href="forgetpassword.php">Forgot password?</a>
             </div>
             <div class="login-button">
-                <button type="submit">Sign In</button>
+                <button type="submit" name="login-submit">Sign In</button>
             </div>
 
 
