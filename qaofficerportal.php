@@ -1,5 +1,16 @@
-<?php 
-include_once('qaheader.php'); ?>
+<?php
+// Start or resume session
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['qa_officer'])) {
+    // If not logged in, redirect to login page
+    header("Location: qalogin.php");
+    exit();
+}
+include_once('qaheader.php');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,11 +28,20 @@ include_once('qaheader.php'); ?>
 </head>
 
 <body>
+<?php
+ if (isset($_SESSION['qa_officer'])) {
+     // Access the student's information
+     $qa = $_SESSION['qa_officer'];
+ 
+ } 
+ ?>
+   
 
     <div class="image-with-text">
         <div class="overlay"></div>
         <img src="./images/bg1.jpeg" alt="University Image">
         <div class="image-text-container">
+        <h2 class="image-text">HELLO <span style="text-transform: capitalize;"><?php echo $qa['qa_name']; ?></span></h2>
             <h2 class="image-text">WELCOME TO QA OFFICER PORTAL!</h2>
         </div>
     </div>

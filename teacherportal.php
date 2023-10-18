@@ -1,3 +1,16 @@
+<?php
+// Start or resume session
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['instructor'])) {
+    // If not logged in, redirect to login page
+    header("Location: instructorlogin.php");
+    exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,6 +29,13 @@
 </head>
 
 <body>
+<?php
+ if (isset($_SESSION['instructor'])) {
+     // Access the student's information
+     $instructor = $_SESSION['instructor'];
+ 
+ } 
+ ?>
     <header id="schoolify-header">
         <nav>
             <input type="checkbox" id="check" style="color: transparent">
@@ -59,6 +79,7 @@
         <div class="overlay"></div>
         <img src="./images/bg1.jpeg" alt="University Image">
         <div class="image-text-container">
+        <h2 class="image-text">HELLO <span style="text-transform: capitalize;"><?php echo $instructor['instructor_name']; ?></span></h2>
             <h2 class="image-text">WELCOME TO TEACHER PORTAL!</h2>
         </div>
     </div>

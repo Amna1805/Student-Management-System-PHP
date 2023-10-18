@@ -74,7 +74,8 @@ if(isset($_POST['submit_contact'])) {
                     placeholder="Describe your Issue" required></textarea>
             </div>
             <div class="submit-button">
-                <button type="submit">
+                <button type="submit" name="submit_contact">Submit</button>
+    </div>
     </div>
 </body>
 </html>
