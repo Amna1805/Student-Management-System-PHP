@@ -1,10 +1,17 @@
 <?php 
+<<<<<<< HEAD
 session_start();
 
 include_once('header.php'); 
 include_once('functions.php'); 
 if(isset($_POST['login-submit'])) {
     student_login();
+=======
+include_once('header.php'); 
+include_once('functions.php'); 
+if(isset($_POST['login-submit'])) {
+    user_login();
+>>>>>>> 739417ec290b25d73a7bb4f9da45da4db51e8cc6
 }?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +22,7 @@ if(isset($_POST['login-submit'])) {
     <link rel="stylesheet" type="text/css" href="css/login.css">
     <title>Document</title>
     <script type="text/javascript">
+<<<<<<< HEAD
      function validateForm() {
     // Get form values
     var regNo = document.getElementById("regno").value;
@@ -33,6 +41,38 @@ if(isset($_POST['login-submit'])) {
     return true;
 }
 
+=======
+        function validateForm() {
+            // Get form values
+            var name = document.getElementById("name").value;
+            var email = document.getElementById("email").value;
+            var question = document.getElementById("question").value;
+
+            // Validate name (only alphabets and spaces)
+            var nameRegex = /^[a-zA-Z\s]+$/;
+            if (!nameRegex.test(name.trim())) {
+                alert("Please enter a valid name (only alphabets and spaces).");
+                return false;
+            }
+
+            // Validate email
+            var emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!emailRegex.test(email.trim())) {
+                alert("Please enter a valid email address.");
+                return false;
+            }
+
+            // Validate question
+            if (question.trim() === "") {
+                alert("Please describe your issue.");
+                return false;
+            }
+
+            // You can add more specific validations if needed
+
+            return true;
+        }
+>>>>>>> 739417ec290b25d73a7bb4f9da45da4db51e8cc6
     </script>
 </head>
 <body>

@@ -1,5 +1,16 @@
-<?php 
-include_once('programcoheader.php'); ?>
+<?php
+// Start or resume session
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['program_coordinator'])) {
+    // If not logged in, redirect to login page
+    header("Location: programcologin.php");
+    exit();
+}
+include_once('programcoheader.php');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,11 +29,18 @@ include_once('programcoheader.php'); ?>
 </head>
 
 <body>
-  
+<?php
+ if (isset($_SESSION['program_coordinator'])) {
+     // Access the student's information
+     $progco = $_SESSION['program_coordinator'];
+ 
+ } 
+ ?>
     <div class="image-with-text">
         <div class="overlay"></div>
         <img src="./images/bg1.jpeg" alt="University Image">
         <div class="image-text-container">
+        <h2 class="image-text">HELLO <span style="text-transform: capitalize;"><?php echo $progco['program_co_name']; ?></span></h2>
             <h2 class="image-text">WELCOME TO PROGRAM COORDINATOR PORTAL!</h2>
         </div>
     </div>

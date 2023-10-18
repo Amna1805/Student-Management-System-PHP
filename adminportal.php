@@ -1,5 +1,15 @@
-<?php 
-include_once('adminheader.php'); ?>
+<?php
+// Start or resume session
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['instructor'])) {
+    // If not logged in, redirect to login page
+    header("Location: instructorlogin.php");
+    exit();
+}
+include_once('adminheader.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,11 +28,19 @@ include_once('adminheader.php'); ?>
 </head>
 
 <body>
+<?php
+ if (isset($_SESSION['admin'])) {
+     // Access the student's information
+     $admin = $_SESSION['admin'];
+ 
+ } 
+ ?>
    
     <div class="image-with-text">
         <div class="overlay"></div>
         <img src="./images/bg1.jpeg" alt="University Image">
         <div class="image-text-container">
+        <h2 class="image-text">HELLO <span style="text-transform: capitalize;"><?php echo $admin['admin_name']; ?></span></h2>
             <h2 class="image-text">WELCOME TO ADMIN PORTAL!</h2>
         </div>
     </div>
