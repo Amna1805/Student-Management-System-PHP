@@ -455,3 +455,141 @@ function generateRandomPassword($length = 10) {
 
     return $password;
 }
+
+
+function instructor_login() {
+    global $db;
+
+    $empId = mysqli_real_escape_string($db, $_POST['empl_id']);
+    $pass = mysqli_real_escape_string($db, $_POST['password']);
+
+    $user_query = "SELECT * FROM `instructor` WHERE `employee_id`='$empId' AND `instructor_password`='$pass'";
+    $users_results = mysqli_query($db, $user_query);
+
+    if ($users_results) {
+        if (mysqli_num_rows($users_results) === 1) {
+            $user = mysqli_fetch_assoc($users_results);
+
+            // Set session variables for the logged-in user using the registration number
+            $_SESSION['instructor'] = $user;
+    // Add more session variables as needed
+
+    // Redirect to the student portal
+    echo '<script>alert("Login Successful"); window.location = "teacherportal.php";</script>';
+exit();
+} else {
+// If login fails, show an error alert
+echo '
+<script>alert("Wrong credentials. Please try again."); window.location = "instructorlogin.php";</script>';
+exit();
+}
+} else {
+// Database query error
+echo '
+<script>alert("Something went wrong. Please try again later."); window.location = "instructorlogin.php";</script>';
+exit();
+}
+}
+
+function admin_login() {
+    global $db;
+
+    $empId = mysqli_real_escape_string($db, $_POST['empl_id']);
+    $pass = mysqli_real_escape_string($db, $_POST['password']);
+
+    $user_query = "SELECT * FROM `admin` WHERE `employee_id`='$empId' AND `admin_password`='$pass'";
+    $users_results = mysqli_query($db, $user_query);
+
+    if ($users_results) {
+        if (mysqli_num_rows($users_results) === 1) {
+            $user = mysqli_fetch_assoc($users_results);
+
+            // Set session variables for the logged-in user using the registration number
+            $_SESSION['admin'] = $user;
+    // Add more session variables as needed
+
+    // Redirect to the student portal
+    echo '<script>alert("Login Successful"); window.location = "adminportal.php";</script>';
+exit();
+} else {
+// If login fails, show an error alert
+echo '
+<script>alert("Wrong credentials. Please try again."); window.location = "adminlogin.php";</script>';
+exit();
+}
+} else {
+// Database query error
+echo '
+<script>alert("Something went wrong. Please try again later."); window.location = "adminlogin.php";</script>';
+exit();
+}
+}
+
+function qa_login() {
+    global $db;
+
+    $empId = mysqli_real_escape_string($db, $_POST['empl_id']);
+    $pass = mysqli_real_escape_string($db, $_POST['password']);
+
+    $user_query = "SELECT * FROM `qa_officer` WHERE `employee_id`='$empId' AND `qa_password`='$pass'";
+    $users_results = mysqli_query($db, $user_query);
+
+    if ($users_results) {
+        if (mysqli_num_rows($users_results) === 1) {
+            $user = mysqli_fetch_assoc($users_results);
+
+            // Set session variables for the logged-in user using the registration number
+            $_SESSION['qa_officer'] = $user;
+    // Add more session variables as needed
+
+    // Redirect to the student portal
+    echo '<script>alert("Login Successful"); window.location = "qaofficerportal.php";</script>';
+exit();
+} else {
+// If login fails, show an error alert
+echo '
+<script>alert("Wrong credentials. Please try again."); window.location = "qalogin.php";</script>';
+exit();
+}
+} else {
+// Database query error
+echo '
+<script>alert("Something went wrong. Please try again later."); window.location = "qalogin.php";</script>';
+exit();
+}
+}
+
+
+function progco_login() {
+    global $db;
+
+    $empId = mysqli_real_escape_string($db, $_POST['empl_id']);
+    $pass = mysqli_real_escape_string($db, $_POST['password']);
+
+    $user_query = "SELECT * FROM `program_coordinator` WHERE `employee_id`='$empId' AND `program_co_password`='$pass'";
+    $users_results = mysqli_query($db, $user_query);
+
+    if ($users_results) {
+        if (mysqli_num_rows($users_results) === 1) {
+            $user = mysqli_fetch_assoc($users_results);
+
+            // Set session variables for the logged-in user using the registration number
+            $_SESSION['program_coordinator'] = $user;
+    // Add more session variables as needed
+
+    // Redirect to the student portal
+    echo '<script>alert("Login Successful"); window.location = "programcoordinatorportal.php";</script>';
+exit();
+} else {
+// If login fails, show an error alert
+echo '
+<script>alert("Wrong credentials. Please try again."); window.location = "programcologin.php";</script>';
+exit();
+}
+} else {
+// Database query error
+echo '
+<script>alert("Something went wrong. Please try again later."); window.location = "programcologin.php";</script>';
+exit();
+}
+}
