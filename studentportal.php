@@ -1,5 +1,16 @@
-<?php 
-include_once('header.php'); ?>
+<?php
+// Start or resume session
+session_start();
+
+// Check if the user is logged in
+if (!isset($_SESSION['student'])) {
+    // If not logged in, redirect to login page
+    header("Location: studentlogin.php");
+    exit();
+}
+
+include_once('studentheader.php');
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,10 +24,20 @@ include_once('header.php'); ?>
     <title>Document</title>
 </head>
 <body>
+
+ <?php
+ if (isset($_SESSION['student'])) {
+     // Access the student's information
+     $student = $_SESSION['student'];
+ 
+ } 
+ ?>
+ 
 <div class="image-with-text">
         <div class="overlay"></div>
         <img src="./images/bg1.jpeg" alt="University Image">
         <div class="image-text-container">
+        <h2 class="image-text">HELLO <span style="text-transform: capitalize;"><?php echo $student['std_name']; ?></span></h2>
             <h2 class="image-text">WELCOME TO STUDENT PORTAL!</h2>
         </div>
     </div>
@@ -78,4 +99,4 @@ include_once('header.php'); ?>
 </body>
 </html>
 
-<?php include_once('footer.php'); ?>
+<?php include_once('studentfooter.php'); ?>

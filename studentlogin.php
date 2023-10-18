@@ -1,6 +1,11 @@
 <?php 
-include_once('header.php'); ?>
+session_start();
 
+include_once('header.php'); 
+include_once('functions.php'); 
+if(isset($_POST['login-submit'])) {
+    student_login();
+}?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,10 +14,30 @@ include_once('header.php'); ?>
     <link rel="stylesheet" type="text/css" href="css/home.css">
     <link rel="stylesheet" type="text/css" href="css/login.css">
     <title>Document</title>
+    <script type="text/javascript">
+     function validateForm() {
+    // Get form values
+    var regNo = document.getElementById("regno").value;
+    var password = document.getElementById("password").value;
+
+    // Validate registration number (you can customize the regex pattern)
+    var regNoRegex = /^[a-zA-Z0-9]+$/;
+    if (!regNoRegex.test(regNo.trim())) {
+        alert("Please enter a valid registration number.");
+        return false;
+    }
+
+
+    // You can add more specific validations if needed
+
+    return true;
+}
+
+    </script>
 </head>
 <body>
 <div class="login-container">
-        <form class="login-form">
+        <form class="login-form" method="POST" onsubmit="return validateForm();">
             <div class="welcome">
                 <h1 class="welcome-text">Welcome Back!</h1>
                 <p style="margin-top: -10px;">Login below or Create Account</p>
@@ -20,7 +45,7 @@ include_once('header.php'); ?>
 
             <div class="form-group">
                 <label for="username">Registration No</label>
-                <input type="text" id="regno" name="regno" placeholder="Type your Registration No" required>
+                <input type="text" id="regno" name="login_id" placeholder="Type your Registration No" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
@@ -35,7 +60,7 @@ include_once('header.php'); ?>
                 <a href="forgetpassword.php">Forgot password?</a>
             </div>
             <div class="login-button">
-                <button type="submit">Sign In</button>
+                <button type="submit" name="login-submit">Sign In</button>
             </div>
 
 

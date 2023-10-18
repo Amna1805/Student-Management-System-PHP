@@ -1,6 +1,5 @@
 <?php
 ob_start();
-session_start();
 $db = mysqli_connect('localhost', 'root', '', 'uta_student');
 if (!$db) {
     die('Could not connect to the database: ' . mysqli_connect_error());

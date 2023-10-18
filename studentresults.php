@@ -1,5 +1,5 @@
 <?php 
-include_once('header.php'); ?>
+include_once('studentheader.php'); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -241,4 +241,4 @@ include_once('header.php'); ?>
 </body>
 </html>
 
-<?php include_once('footer.php'); ?>
+<?php include_once('studentfooter.php'); ?>
