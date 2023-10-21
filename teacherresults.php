@@ -1,3 +1,15 @@
+<?php
+// Start or resume session
+include_once('functions.php');
+// Check if the user is logged in
+if (!isset($_SESSION['instructor'])) {
+    // If not logged in, redirect to login page
+    header("Location: instructorlogin.php");
+    exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,6 +27,15 @@
 </head>
 
 <body>
+    <?php
+    if (isset($_SESSION['instructor'])) {
+        // Access the student's information
+        $instructor = $_SESSION['instructor'];
+        $teacher_id = $instructor['instructor_id'];
+
+    }
+
+?>
     <header id="schoolify-header">
         <nav>
             <input type="checkbox" id="check" style="color: transparent">
@@ -47,7 +68,7 @@
                 <li><a href="teacherportal.php">Home</a></li>
                 <li><a href="teachercourses.php">Courses</a></li>
                 <li><a href="teacherexams.php">Exams</a></li>
-                <li><a  class="active" href="teacherresults.php">Results</a></li>
+                <li><a class="active" href="teacherresults.php">Results</a></li>
                 <li class="hidethem"><a href="teacherprofile.php">Profile</a></li>
                 <li class="hidethem"><a href="home.php">Logout</a></li>
             </ul>
@@ -65,226 +86,83 @@
 
     <!---RESULTS-->
     <div class="results">
-        <h6>Course: Cloud Computing</h6> <!-- Change the course name as needed -->
-        <div class="view-all">
-            <span>View all</span>
-            <i class="fas fa-arrow-right"></i>
-        </div>
-        <div class="responsivetable">
-            <table class="resultstable">
-                <thead>
-                    <tr>
-                        <th>Student Name</th>
-                        <th>Registration No</th>
-                        <th>Total Marks (100)</th>
-                        <th>GPA</th>
-                        <th>CGPA</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Student 1 -->
-                    <tr>
-                        <td>Student 1</td>
-                        <td>123456</td>
-                        <td>67</td>
-                        <td>3.7</td>
-                        <td>3.5</td>
-                        <td><a href="teacherdetailedresult.php" class="view-button">View Details</a></td>
-                    </tr>
+        <div class="results">
+            <?php
+            $teacher_courses = get_teacher_courses($teacher_id);
 
-                    <!-- Student 2 -->
-                    <tr>
-                        <td>Student 2</td>
-                        <td>654321</td>
-                        <td>39</td>
-                        <td>3.5</td>
-                        <td>3.6</td>
-                        <td><a href="teacherdetailedresult.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Student 2</td>
-                        <td>654321</td>
-                        <td>88</td>
-                        <td>3.5</td>
-                        <td>3.6</td>
-                        <td><a href="teacherdetailedresult.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Student 2</td>
-                        <td>654321</td>
-                        <td>55</td>
-                        <td>3.5</td>
-                        <td>3.6</td>
-                        <td><a href="teacherdetailedresult.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><strong>Total Students</strong></td>
-                        <td colspan="1">55</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><strong>Passed Students</strong></td>
-                        <td colspan="1">40</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><strong>Average Pecentage</strong></td>
-                        <td colspan="1">80%</td>
-                    </tr>
-                    <!-- Add more students and their details as needed -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="results">
-        <h6>Course: Machine Learning</h6> <!-- Change the course name as needed -->
-        <div class="view-all">
-            <span>View all</span>
-            <i class="fas fa-arrow-right"></i>
-        </div>
-        <div class="responsivetable">
-            <table class="resultstable">
-                <thead>
-                    <tr>
-                        <th>Student Name</th>
-                        <th>Registration No</th>
-                        <th>Total Marks (100)</th>
-                        <th>GPA</th>
-                        <th>CGPA</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Student 1 -->
-                    <tr>
-                        <td>Student 1</td>
-                        <td>123456</td>
-                        <td>67</td>
-                        <td>3.7</td>
-                        <td>3.5</td>
-                        <td><a href="teacherdetailedresult.php" class="view-button">View Details</a></td>
-                    </tr>
+            if (!empty($teacher_courses)) {
+                foreach ($teacher_courses as $course_id) {
+                    $course_details = get_course_details($course_id);
 
-                    <!-- Student 2 -->
-                    <tr>
-                        <td>Student 2</td>
-                        <td>654321</td>
-                        <td>39</td>
-                        <td>3.5</td>
-                        <td>3.6</td>
-                        <td><a href="teacherdetailedresult.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Student 2</td>
-                        <td>654321</td>
-                        <td>88</td>
-                        <td>3.5</td>
-                        <td>3.6</td>
-                        <td><a href="teacherdetailedresult.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Student 2</td>
-                        <td>654321</td>
-                        <td>55</td>
-                        <td>3.5</td>
-                        <td>3.6</td>
-                        <td><a href="teacherdetailedresult.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><strong>Total Students</strong></td>
-                        <td colspan="1">55</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><strong>Passed Students</strong></td>
-                        <td colspan="1">40</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><strong>Average Pecentage</strong></td>
-                        <td colspan="1">80%</td>
-                    </tr>
-                    <!-- Add more students and their details as needed -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="results">
-        <h6>Course: Data Science</h6> <!-- Change the course name as needed -->
-        <div class="view-all">
-            <span>View all</span>
-            <i class="fas fa-arrow-right"></i>
-        </div>
-        <div class="responsivetable">
-            <table class="resultstable">
-                <thead>
-                    <tr>
-                        <th>Student Name</th>
-                        <th>Registration No</th>
-                        <th>Total Marks (100)</th>
-                        <th>GPA</th>
-                        <th>CGPA</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Student 1 -->
-                    <tr>
-                        <td>Student 1</td>
-                        <td>123456</td>
-                        <td>67</td>
-                        <td>3.7</td>
-                        <td>3.5</td>
-                        <td><a href="teacherdetailedresult.php" class="view-button">View Details</a></td>
-                    </tr>
+                    if ($course_details !== null) {
+                        echo '<h6>Course: ' . $course_details['course_title'] . '</h6>';
+                    } else {
+                        echo '<h6>Course: Course Not Found</h6>';
+                    }
 
-                    <!-- Student 2 -->
-                    <tr>
-                        <td>Student 2</td>
-                        <td>654321</td>
-                        <td>39</td>
-                        <td>3.5</td>
-                        <td>3.6</td>
-                        <td><a href="teacherdetailedresult.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Student 2</td>
-                        <td>654321</td>
-                        <td>88</td>
-                        <td>3.5</td>
-                        <td>3.6</td>
-                        <td><a href="teacherdetailedresult.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Student 2</td>
-                        <td>654321</td>
-                        <td>55</td>
-                        <td>3.5</td>
-                        <td>3.6</td>
-                        <td><a href="teacherdetailedresult.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><strong>Total Students</strong></td>
-                        <td colspan="1">55</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><strong>Passed Students</strong></td>
-                        <td colspan="1">40</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><strong>Average Pecentage</strong></td>
-                        <td colspan="1">80%</td>
-                    </tr>
-                    <!-- Add more students and their details as needed -->
-                </tbody>
-            </table>
+                    // Get students taking this course
+                    $students = get_course_students($course_id);
+                    
+
+                    if (!empty($students)) {
+                        echo '<div class="responsivetable">';
+                        echo '<table class="resultstable">';
+                        echo '<thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Registration No</th>
+                            <th>Total Marks (100)</th>
+                            <th>GPA</th>
+                            <th>CGPA</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>';
+                        echo '<tbody>';
+
+                        foreach ($students as $student_id) {
+                            $student_details = get_student_details($student_id);
+                            $student_result = get_student_result($student_id, $course_id);
+
+                            echo '<tr>';
+                            echo '<td>' . $student_details['std_name'] . '</td>';
+                            echo '<td>' . $student_details['std_reg_no'] . '</td>';
+                            if($student_result){
+                            echo '<td>' . $student_result['obtained_marks'] . '</td>';
+                            echo '<td>' . $student_result['grade'] . '</td>';
+                            echo '<td>' . $student_result['cgpa'] . '</td>';
+                            }
+                            echo '<td>
+                            <form action="teacherdetailedresult.php" method="POST">
+                                <input type="hidden" name="student_id" value="' . $student_id . '">
+                                <input type="hidden" name="course_id" value="' . $course_id . '">
+                                <button type="submit" class="view-button">View Details</button>
+                            </form>
+                        </td>';
+                            echo '</tr>';
+                        }
+
+                        echo '</tbody>';
+                        echo '</table>';
+                        echo '</div>';
+                    } else {
+                        echo '<p style="text-align: center; margin: 0; padding: 50px;">No students found for this course.</p>';
+                    }
+                }
+            } else {
+                echo '<h6>Course: No Courses Found</h6>';
+            }
+            ?>
+
         </div>
+
     </div>
-    <div class="view-more">
-        <span>View More</span>
-        <i class="fas fa-chevron-down"></i>
+  
+
     </div>
     <a class="myBtn" href="teacherchat.php">
         <span class="icon"></span>
         Chat
-      </a>
+    </a>
     <footer>
         <div class="content">
             <div class="left-box">

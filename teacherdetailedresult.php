@@ -1,3 +1,14 @@
+<?php
+// Start or resume session
+include_once('functions.php');
+// Check if the user is logged in
+if (!isset($_SESSION['instructor'])) {
+    // If not logged in, redirect to login page
+    header("Location: instructorlogin.php");
+    exit();
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,6 +24,24 @@
 </head>
 
 <body>
+    <?php
+    if (isset($_SESSION['instructor'])) {
+        // Access the student's information
+        $instructor = $_SESSION['instructor'];
+        $teacher_id = $instructor['instructor_id'];
+
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['student_id']) && isset($_POST['course_id'])) {
+            $student_id = $_POST['student_id'];
+            $course_id = $_POST['course_id'];
+
+
+        }
+    }
+
+    ?>
     <!-- Header -->
     <header id="schoolify-header">
         <nav>
@@ -46,7 +75,7 @@
                 <li><a href="teacherportal.php">Home</a></li>
                 <li><a href="teachercourses.php">Courses</a></li>
                 <li><a href="teacherexams.php">Exams</a></li>
-                <li><a  class="active" href="teacherresults.php">Results</a></li>
+                <li><a class="active" href="teacherresults.php">Results</a></li>
                 <li class="hidethem"><a href="teacherprofile.php">Profile</a></li>
                 <li class="hidethem"><a href="home.php">Logout</a></li>
             </ul>
@@ -83,7 +112,7 @@
                             <td>7.5</td>
                             <td class="test_remarks">
                                 <p class="excellent">Excellent</p><br>
-                               
+
                             </td>
                         </tr>
                     </table>
@@ -108,7 +137,7 @@
                             <td>7</td>
                             <td class="test_remarks">
                                 <p class="good">Good</p><br>
-                               
+
                             </td>
                         </tr>
                     </table>
@@ -133,7 +162,7 @@
                             <td>7.5</td>
                             <td class="test_remarks">
                                 <p class="improve">Needs Improvement</p>
-                               
+
                             </td>
                         </tr>
                     </table>
@@ -191,9 +220,9 @@
                             <td>5</td>
                             <td>7.5</td>
                             <td class="Assignment_remarks">
-                                <p class="improve">Needs Improvement</p>  
+                                <p class="improve">Needs Improvement</p>
                             </td>
-                            
+
                         </tr>
                     </table>
                     <div class="note">
@@ -219,7 +248,7 @@
                             <td>6</td>
                             <td class="Assignment_remarks">
                                 <p class="good">Good</p><br>
-                               
+
                             </td>
                         </tr>
                     </table>
@@ -241,7 +270,7 @@
     <a class="myBtn" href="teacherchat.php">
         <span class="icon"></span>
         Chat
-      </a>
+    </a>
 
 
 
