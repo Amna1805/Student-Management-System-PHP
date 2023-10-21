@@ -1,3 +1,33 @@
+<?php
+include_once('functions.php');
+if (isset($_GET['qa_id'])) {
+    $qa = getQA($_GET['qa_id']);
+    $qaData = mysqli_fetch_assoc($qa);
+    $qaPermissions = getQAPermissions($_GET['qa_id']);
+    $allPermissions = getSpecificPermission(3);
+    $checkedArray[] = "0";
+    if ($qaPermissions) {
+        while ($row = mysqli_fetch_assoc($qaPermissions)) {
+            $checkedArray[] = $row['permission_id'];
+        }
+    }
+} else {
+
+    header('location:adminQApage.php');
+}
+
+if (isset($_POST['update_qa'])) {
+    if (updateQAPermissions()) {
+        echo '<script>alert("QA Added Succesfully!")</script>';
+        header('Location: qapermissions.php?qa_id=' . $_POST['qa_id']);
+    } else {
+        echo '<script>alert("Failed!")</script>';
+        header('Location: qapermissions.php?qa_id=' . $_POST['qa_id']);
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -50,62 +80,53 @@
         <section></section>
     </header>
     <div class="officer-section">
-        <h2>QA Officer</h2>
-        <p>Employee ID: 123456</p>
-        <p>Name: John Doe</p>
-        <p>Designation: Quality Assurance Officer Team Lead</p>
+        <h2>Program Coordinator</h2>
+        <p>Employee ID:
+            <?php echo $qaData['employee_id'] ?>
+        </p>
+        <p>Name:
+            <?php echo $qaData['qa_name'] ?>
+        </p>
     </div>
     <!---PERMISSIONS-->
     <h1 class="heading">PERMISSIONS</h1>
     <div class="student-information">
-        <div class="responsivetable">
-            <table class="student-table">
-                <thead>
-                    <tr>
-                        <th>Action</th>
-                        <th>Permissions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>View Program Policies</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>Add/Update/Delete Program Policies</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>View Program Objectives</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>Add/Update/Delete Program Objectives</td>
-                        <td><input type="checkbox"></td>
-                    </tr>
-                    <tr>
-                        <td>View Courses</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>Add/Update/Delete Courses</td>
-                        <td><input type="checkbox"></td>
-                    </tr>
-                    <tr>
-                        <td>View Course Content</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>Add/Update/Delete Course Content</td>
-                        <td><input type="checkbox"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- Inside the student-information div -->
-        <div class="button-container">
-            <button class="edit-button">Update</button>
-        </div>
+        <form method="POST">
+            <input type="text" name="qa_id" hidden value="<?php echo $qaData['qa_id']; ?>" />
+            <div class="responsivetable">
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Permissions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        while ($row = mysqli_fetch_assoc($allPermissions)) {
+                            ?>
+                            <tr>
+                                <td>
+                                    <?php echo $row['permission_action']; ?>
+                                </td>
+                                <td>
+                                    <input type="checkbox" name="<?php echo $row['permission_action'] ?>"
+                                        value="<?php echo $row['permission_id'] ?>" <?php if (in_array($row['permission_id'], $checkedArray))
+                                               echo "checked"; ?>>
+                                </td>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="button-container">
+                <button class="edit-button" name="update_qa">Update</button>
+            </div>
+        </form>
 
     </div>
 

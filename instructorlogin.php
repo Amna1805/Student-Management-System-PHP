@@ -61,7 +61,7 @@ if (isset($_POST['instructor_login'])) {
                 <a href="forgetpassword.php">Forgot password?</a>
             </div>
             <div class="login-button">
-                <button type="submit" name="admin_login">Sign In</button>
+                <button type="submit" name="instructor_login">Sign In</button>
             </div>
 
 

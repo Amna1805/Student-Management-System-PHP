@@ -1,3 +1,20 @@
+<?php
+// Start or resume session
+include_once('functions.php');
+// Check if the user is logged in
+if (!isset($_SESSION['instructor'])) {
+    // If not logged in, redirect to login page
+    header("Location: instructorlogin.php");
+    exit();
+}
+if (isset($_POST['update_exam'])) {
+    if (updateExam()) {
+        echo '<script>alert("Exam updates  Succesfully!")</script>';
+    } else {
+        echo '<script>alert("Failed!")</script>';
+    }
+} 
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,9 +28,73 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Jacques+Francois&display=swap" rel="stylesheet">
     <title>Update Exams</title>
+    <script>
+function validateForm() {
+    // Get the values of the exam title and time allotted fields
+    var examTitle = document.getElementById("exam_title").value;
+    var timeAllot = document.getElementById("time_allot").value;
+    var regex = /^[a-zA-Z0-9\s.,?-]+$/;
+    // Check if the exam title and time allotted are empty
+    if (!regex.test(examTitle.trim())) {
+        alert("Please enter a valid exam title (Only alphabets, spaces, numbers, commas, and periods).");
+        return false;
+    }
+
+    if (timeAllot.trim() === "") {
+        alert("Time allotted cannot be empty");
+        return false;
+    }
+    var questionInputs = document.getElementsByClassName("question");
+
+// Validate each question
+for (var i = 0; i < questionInputs.length; i++) {
+    var questionInput = questionInputs[i];
+    var questionText = questionInput.value;
+
+    if (!regex.test(questionText.trim())) {
+        alert("Please enter a valid question for Question " + (i + 1) + ".");
+        return false;
+    }
+
+    // Get all option input elements by class name
+    var optionInputs = document.getElementsByClassName("option");
+
+    // Validate each option
+    for (var j = 0; j < optionInputs.length; j++) {
+        var optionInput = optionInputs[j];
+        var optionText = optionInput.value;
+
+        if (!regex.test(optionText.trim())) {
+            alert("Please enter a valid option for Questions.");
+            return false;
+        }
+    }
+}
+
+// All validations passed
+return true;
+        
+}
+</script>
+
 </head>
 
 <body>
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['exam_id'])) {
+        $exam_id = $_POST['exam_id'];
+        $exam_det = get_exam_details($exam_id);
+        $exam_question=get_question_details($exam_id);
+        // Fetch and display course details based on $course_id
+        // ...
+        // Your code to fetch and display course details goes here
+        // ...
+    } else {
+        $exam_id =99;
+    }
+}
+?>
     <header id="schoolify-header">
         <nav>
             <input type="checkbox" id="check" style="color: transparent">
@@ -53,241 +134,56 @@
         </nav>
         <section></section>
     </header>
+    <form method="POST" onsubmit="return validateForm();">
     <section class="exam-info-section">
         <div class="exam-info">
             <div class="exam-info-heading">
-                <input type="text" placeholder="Exam Title" name="exam_title" value="Cloud Computing">
+                <input type="text" placeholder="Exam Title" name="exam_title" value="Cloud Computing" id="exam_title">
             </div>
             <div class="time-remaining">
-                <span>Time Remaining: </span>
-                <input  type="text" placeholder="Time Remaining" name="time_remaining" value="00:49">
+                <span>Time Alloted: </span>
+                <input  type="text" placeholder="Time Remaining" name="time_allot" value="00:49" id="time_allot">
             </div>
         </div>
         <div class="exam-mcqs">
-            <!-- MCQ 1 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>1.</p>
-                    <input class="question" type="text" placeholder="Question 1" name="question1" value="What is cloud computing?">
-                </div>
+        <?php
+$questionCounter = 1;
+foreach ($exam_question as $question) {
+    ?>
+   <div class="mcq">
+    <div class="questionsdiv">
+        <p><?php echo $questionCounter; ?>.</p>
+        <input class="question" type="text" placeholder="Question <?php echo $questionCounter; ?>" name="question[]" id="question<?php echo $questionCounter; ?>" value="<?php echo htmlspecialchars($question['question']); ?>">
+    </div>
 
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question1_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question1_option1" value="Cloud computing refers to the delivery of computing services, including servers, storage, databases, networking, over the Internet.">
-                    </label>
-                </div>
+    <div class="optionsdiv">
+        <label for="mcq<?php echo $questionCounter; ?>_option1">
+            <input type="radio" name="option1[]" value="option1" id="mcq<?php echo $questionCounter; ?>_opt1">
+            <input type="text" class="option" placeholder="Option 1" name="option1[]" value="<?php echo $question['option_1']; ?>">
+        </label>
+    </div>
 
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question1_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question1_option2" value="Cloud computing refers to the delivery of physical hardware components over the Internet.">
-                    </label>
-                </div>
-            </div>
+    <div class="optionsdiv">
+        <label for="mcq<?php echo $questionCounter; ?>_option2">
+            <input type="radio" nname="option2[]" value="option2" id="mcq<?php echo $questionCounter; ?>_option2">
+            <input type="text" class="option" placeholder="Option 2" name="option2[]" value="<?php echo $question['option_2']; ?>">
+        </label>
+    </div>
+</div>
 
-            <!-- MCQ 2 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>2.</p>
-                    <input class="question" type="text" placeholder="Question 2" name="question2" value="What are the key characteristics of cloud computing?">
-                </div>
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question2_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question2_option1" value="On-demand self-service, Broad network access, Resource pooling, Rapid elasticity, Measured service.">
-                    </label>
-                </div>
+    <?php
+    $questionCounter++;
+}
+?>
 
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question2_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question2_option2" value="Only available through specific providers, Limited scalability, Fixed resource allocation.">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 3 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>3.</p>
-                    <input class="question" type="text" placeholder="Question 3" name="question3" value="What are the three main service models in cloud computing?">
-                </div>
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question3_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question3_option1" value="Infrastructure as a Service (IaaS), Platform as a Service (PaaS), Software as a Service (SaaS).">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question3_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question3_option2" value="Database as a Service (DBaaS), Network as a Service (NaaS), Function as a Service (FaaS).">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 4 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>4.</p>
-                    <input class="question" type="text" placeholder="Question 4" name="question4" value="What are the deployment models in cloud computing?">
-                </div>
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question4_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question4_option1" value="Public cloud, Private cloud, Hybrid cloud, Community cloud.">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question4_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question4_option2" value="Local cloud, Global cloud, Regional cloud.">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 5 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>5.</p>
-                    <input class="question" type="text" placeholder="Question 5" name="question5" value="What is the primary advantage of using a public cloud?">
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question5_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question5_option1" value="Cost-effectiveness and scalability.">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question5_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question5_option2" value="Greater control and customization.">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 6 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>6.</p>
-                    <input class="question" type="text" placeholder="Question 6" name="question6" value="What is a virtual machine in the context of cloud computing?">
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question6_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question6_option1" value="A software emulation of a physical computer.">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question6_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question6_option2" value="A hardware component of a server.">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 7 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>7.</p>
-                    <input class="question" type="text" placeholder="Question 7" name="question7" value="What is meant by the term 'elasticity' in cloud computing?">
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question7_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question7_option1" value="The ability to quickly and easily scale resources up or down as needed.">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question7_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question7_option2" value="The ability to restrict access to sensitive data.">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 8 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>8.</p>
-                    <input class="question" type="text" placeholder="Question 8" name="question8" value="What is a hypervisor in cloud computing?">
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question8_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question8_option1" value="Software that creates and manages virtual machines.">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question8_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question8_option2" value="A physical server in a data center.">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 9 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>9.</p>
-                    <input class="question" type="text" placeholder="Question 9" name="question9" value="What is the purpose of load balancing in cloud computing?">
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question9_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question9_option1" value="To distribute incoming traffic across multiple servers to ensure no single server is overwhelmed.">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question9_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question9_option2" value="To securely encrypt data transmitted between the client and the server.">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 10 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>10.</p>
-                    <input class="question" type="text" placeholder="Question 10" name="question10" value="What are the security challenges in cloud computing?">
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question10_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question10_option1" value="Data breaches, Identity theft, Unauthorized access.">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question10_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question10_option2" value="Software bugs, Hardware failures, Network outages.">
-                    </label>
-                </div>
-            </div>
 
             <div class="create-button">
-                <button type="submit">Update</button>
+                <button type="submit" name="update_exam">Update</button>
             </div>
         </div>
     </section>
-
-
+    <input type="text" name="exam_id" hidden  value="<?php echo $exam_id;  ?>">
+</form>
     <!-- Footer -->
     <footer>
         <div class="content">

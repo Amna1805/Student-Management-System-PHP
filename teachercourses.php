@@ -1,3 +1,21 @@
+<?php
+// Start or resume session
+include_once('functions.php');
+// Check if the user is logged in
+if (!isset($_SESSION['instructor'])) {
+    // If not logged in, redirect to login page
+    header("Location: instructorlogin.php");
+    exit();
+}
+if (isset($_POST['delete_name'])) {
+    if (deleteCourse()) {
+        echo '<script>alert("Course Deleted Succesfully!")</script>';
+        header('location:teachercourses.php');
+    } else {
+        echo '<script>alert("Failed!")</script>';
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,9 +31,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Jacques+Francois&display=swap" rel="stylesheet">
     <title>Teacher courses</title>
+    <script>
+        function completeDeletion() {
+            const response = confirm('Are you sure you want to delete this course?')
+            if (response) {
+                return true
+            } else {
+                return false
+            }
+        }
+    </script>
 </head>
 
 <body>
+<?php
+ if (isset($_SESSION['instructor'])) {
+     // Access the student's information
+     $instructor = $_SESSION['instructor'];
+     $teacher_id=$instructor['instructor_id'];
+ 
+ } 
+ ?>
     <header id="schoolify-header">
         <nav>
             <input type="checkbox" id="check" style="color: transparent">
@@ -63,82 +99,52 @@
         </div>
     </div>
     <a href="createcourse.php" class="create-course-button">Create New Course</a>
-
+    <?php
+    $courses = get_teacher_courses($teacher_id);
+?>
     <div class="courses">
         <h6>My Courses</h6>
     <div class="responsivetable">
         <table class="course-table">
-            <thead>
-                <tr>
-                    <th>Course Name</th>
-                    <th>Credits</th>
-                    <th>Hours</th>
-                    <th colspan="3">Actions</th>
-                </tr>
-            </thead>
+        <thead>
+             <tr>
+                 <th>Course Name</th>
+                 <th>Credits</th>
+                 <th>Class Duration</th>
+                 <th colspan="3">Actions</th>
+             </tr>
+         </thead>
+        <?php  foreach ($courses as $course) {
+             
+            $course_det = get_course_details($course); ?>
+           
             <tbody>
                 <!-- Course 1 -->
                 <tr>
-                    <td>Artificial Intelligence and Machine Learning</td>
-                    <td>3</td>
-                    <td>45</td>
+                    <td><?php echo $course_det['course_title'] ?></td>
+                    <td><?php echo $course_det['credit_hours'] ?></td>
+                    <td><?php echo $course_det['class_duration'] ?></td>
                     <td>
-                        <a href="viewcourse.php" class="action-button view">View</a>
+                    <form action="viewcourse.php" method="POST">
+                    <input type="hidden" name="course_id" value="<?php echo $course_det['course_id']; ?>">
+                    <button type="submit" class="action-button view">View</button>
+                    </form>
                     </td>
                     <td>
-                        <a href="updatecourse.php" class="action-button update">Update</a>
+                    <form action="updatecourse.php" method="POST">
+                    <input type="hidden" name="course_id" value="<?php echo $course_det['course_id']; ?>">
+                    <button type="submit" class="action-button update">Update</button>
+                    </form>
                     </td>
                     <td>
-                        <a href="deletecourse.php" class="action-button delete">Delete</a>
-                    </td>
-                </tr>
-
-                <!-- Course 2 -->
-                <tr>
-                    <td>Advanced Security</td>
-                    <td>4</td>
-                    <td>60</td>
-                    <td>
-                        <a href="viewcourse.php" class="action-button view">View</a>
-                    </td>
-                    <td>
-                        <a href="updatecourse.php" class="action-button update">Update</a>
-                    </td>
-                    <td>
-                        <a href="deletecourse.php" class="action-button delete">Delete</a>
+                    <form method="POST" onsubmit="return completeDeletion()">
+                    <input type="hidden" name="course_id" value="<?php echo $course_det['course_id']; ?>">
+                    <button type="submit" class="action-button delete" name="delete_name">Delete</button>
+                    </form>
                     </td>
                 </tr>
-
-                <!-- Course 3 -->
-                <tr>
-                    <td>Database Implementation</td>
-                    <td>3</td>
-                    <td>40</td>
-                    <td>
-                        <a href="createcourse.php" class="action-button view">View</a>
-                    </td>
-                    <td>
-                        <a href="updatecourse.php" class="action-button update">Update</a>
-                    </td>
-                    <td>
-                        <a href="deletecourse.php" class="action-button delete">Delete</a>
-                    </td>
-                </tr>
-                <!-- Course 4 -->
-                <tr>
-                    <td>Web Development</td>
-                    <td>3</td>
-                    <td>40</td>
-                    <td>
-                        <a href="viewcourse.php" class="action-button view">View</a>
-                    </td>
-                    <td>
-                        <a href="updatecourse.php" class="action-button update">Update</a>
-                    </td>
-                    <td>
-                        <a href="deletecourse.php" class="action-button delete">Delete</a>
-                    </td>
             </tbody>
+            <?php } ?>
         </table>
 
     </div>

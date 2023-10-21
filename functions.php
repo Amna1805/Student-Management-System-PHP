@@ -1,16 +1,303 @@
 <?php
 include_once('config.php');
+session_start();
+function createCourse()
+{
 
-// require_once('send_mail.php'); 
-function displayProfileImage($imageData) {
-    if (isset($imageData)) {
-         // Dump the image data for debugging
-    var_dump(base64_encode($imageData));
-        return 'data:image/jpeg;base64,' . base64_encode($imageData);
+    $db = $GLOBALS['db'];
+    $courseName = mysqli_real_escape_string($db, $_POST['courseName']);
+    $courseCredits = mysqli_real_escape_string($db, $_POST['courseCredits']);
+    $courseDescription = mysqli_real_escape_string($db, $_POST['courseDescription']);
+    $classesPerWeek = mysqli_real_escape_string($db, $_POST['classesPerWeek']);
+    $classDuration = mysqli_real_escape_string($db, $_POST['classDuration']);
+    $instructor_id = mysqli_real_escape_string($db, $_POST['teacher_id']);
+    $fileName = basename($_FILES["course_image"]["name"]);
+    $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+    $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+    if (in_array($fileType, $allowTypes) && !empty($courseName) && !empty($courseCredits) && !empty($classesPerWeek) && !empty($courseDescription) && !empty($classDuration)) {
+        // Insert the course record
+        $image = $_FILES['course_image']['tmp_name'];
+        $imgContent = addslashes(file_get_contents($image));
+        $insertCourse = mysqli_query($db, "INSERT INTO `courses` (`course_title`, `course_desc`, `credit_hours`, `class_duration`, `class_per_week`, `teacher_id`,`course_image`) 
+        VALUES ('{$courseName}', '{$courseDescription}', '{$courseCredits}', '{$classDuration}', '{$classesPerWeek}', '{$instructor_id}','{$imgContent}')");
+        
+        if ($insertCourse) {
+            // Retrieve the course_id of the inserted course
+            $courseId = mysqli_insert_id($db);
+
+            if (isset($_POST['contentTitle']) && isset($_POST['contentDescription'])) {
+                $contentTitles = $_POST['contentTitle'];
+                $contentDescriptions = $_POST['contentDescription'];
+
+                // Loop through the arrays to access the values and insert them
+                for ($i = 0; $i < count($contentTitles); $i++) {
+                    $contentTitle = mysqli_real_escape_string($db, $contentTitles[$i]);
+                    $contentDescription = mysqli_real_escape_string($db, $contentDescriptions[$i]);
+
+                    // Insert course content records related to the course using the obtained course_id
+                    $insertContent = mysqli_query($db, "INSERT INTO `course_content` (`content_title`, `content_description`, `course_id`) 
+                    VALUES ('{$contentTitle}', '{$contentDescription}', '{$courseId}')");
+                }
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+function deleteCourse()
+{
+    $db = $GLOBALS['db'];
+
+    // Check if course_id is provided
+    if (isset($_POST['course_id'])) {
+        $course_id = mysqli_real_escape_string($db, $_POST['course_id']);
+
+        // First, remove the course from student_courses
+        $delete_student_courses_query = "DELETE FROM student_courses WHERE course_id = $course_id";
+        if (mysqli_query($db, $delete_student_courses_query)) {
+
+            // Delete course content
+            $delete_content_query = "DELETE FROM course_content WHERE course_id = $course_id";
+            if (mysqli_query($db, $delete_content_query)) {
+
+                // Delete exam questionnaires
+                $delete_questionnaire_query = "DELETE FROM exam_questionnaire WHERE exam_id IN (SELECT exam_id FROM exams WHERE course_id = $course_id)";
+                if (mysqli_query($db, $delete_questionnaire_query)) {
+
+                    // Delete exams
+                    $delete_exams_query = "DELETE FROM exams WHERE course_id = $course_id";
+                    if (mysqli_query($db, $delete_exams_query)) {
+
+                        // Delete the course itself
+                        $delete_course_query = "DELETE FROM courses WHERE course_id = $course_id";
+                        if (mysqli_query($db, $delete_course_query)) {
+                            return true; // Deletion successful
+                        } else {
+                            return false; // Course deletion failed
+                        }
+                    } else {
+                        return false; // Exam deletion failed
+                    }
+                } else {
+                    return false; // Exam questionnaire deletion failed
+                }
+            } else {
+                return false; // Content deletion failed
+            }
+        } else {
+            return false; // Removing from student_courses failed
+        }
     } else {
-        return 'path_to_placeholder_image.jpg';
+        return false; // Invalid input (course_id not provided)
     }
 }
+
+
+
+function updateCourse()
+{
+    $db = $GLOBALS['db'];
+    $course_id = intval($_POST['course_id']);
+    $courseName = mysqli_real_escape_string($db, $_POST['courseName']);
+    $courseCredits = mysqli_real_escape_string($db, $_POST['courseCredits']);
+    $courseDescription = mysqli_real_escape_string($db, $_POST['courseDescription']);
+    $classesPerWeek = mysqli_real_escape_string($db, $_POST['classesPerWeek']);
+    $classDuration = mysqli_real_escape_string($db, $_POST['classDuration']);
+    $fileName = basename($_FILES["course_image"]["name"]);
+    $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+    $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+    if (in_array($fileType, $allowTypes) &&!empty($courseName) && !empty($courseCredits) && !empty($classesPerWeek) && !empty($courseDescription) && !empty($classDuration)) {
+        $image = $_FILES['course_image']['tmp_name'];
+        $imgContent = addslashes(file_get_contents($image));
+        $updateCourse = mysqli_query($db, "UPDATE `courses` SET
+            `course_title` = '$courseName',
+            `course_desc` = '$courseDescription',
+            `credit_hours` = '$courseCredits',
+            `class_duration` = '$classDuration',
+            `class_per_week` = '$classesPerWeek',
+            `course_image` = '$imgContent'
+            WHERE `course_id` = $course_id");
+
+        if ($updateCourse) {
+            if (isset($_POST['contentTitle']) && isset($_POST['contentDescription'])) {
+                $contentTitles = $_POST['contentTitle'];
+                $contentDescriptions = $_POST['contentDescription'];
+
+                // Loop through the arrays to access the values and insert them
+                for ($i = 0; $i < count($contentTitles); $i++) {
+                    $contentTitle = mysqli_real_escape_string($db, $contentTitles[$i]);
+                    $contentDescription = mysqli_real_escape_string($db, $contentDescriptions[$i]);
+
+                    $updateContent = mysqli_query($db, "UPDATE `course_content` SET
+                        `content_title` = '$contentTitle',
+                        `content_description` = '$contentDescription'
+                        WHERE `course_id` = $course_id");
+                }
+
+                // Check if all content updates were successful
+                if ($updateContent) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return true; // No content to update, but course update succeeded
+            }
+        } else {
+            return false; // Course update failed
+        }
+    } else {
+        return false; // Validation failed
+    }
+}
+function createExam()
+{
+    $db = $GLOBALS['db'];
+
+    // Extract and sanitize data from the form
+    $exam_title = mysqli_real_escape_string($db, $_POST['exam_title']);
+    $time_allot = mysqli_real_escape_string($db, $_POST['time_allot']);
+    $exam_id = mysqli_real_escape_string($db, $_POST['exam_id']); // Replace with your method of obtaining the exam_id
+
+    // Validate input data
+    if (empty($exam_title)) {
+        echo "Please enter an exam title.";
+        return false;
+    }
+
+    if (empty($time_allot)) {
+        echo "Please enter the time allotted for the exam.";
+        return false;
+    }
+
+    // Update the exam details in the 'exams' table
+    $query = "UPDATE exams SET exam_title = '$exam_title', time_alloted = '$time_allot' WHERE exam_id = '$exam_id'";
+    $result = mysqli_query($db, $query);
+
+    if ($result) {
+        // Assuming you have a way to fetch and update questions and options
+        if (isset($_POST['question']) && isset($_POST['option1']) && isset($_POST['option2'])) {
+            $questions = $_POST['question'];
+            $options1 = $_POST['option1'];
+            $options2 = $_POST['option2'];
+
+            for ($i = 0; $i < count($questions); $i++) {
+                $question = mysqli_real_escape_string($db, $questions[$i]);
+                $option1 = mysqli_real_escape_string($db, $options1[$i]);
+                $option2 = mysqli_real_escape_string($db, $options2[$i]);
+
+
+                // Update or insert the question and options based on your application logic
+                // You should handle potential errors here and return appropriate messages
+                $query = "INSERT INTO exam_questionnaire (exam_id, question, option_1, option_2) 
+                VALUES ('$exam_id', '$question', '$option1', '$option2')";
+                $result = mysqli_query($db, $query);
+
+                if (!$result) {
+                    echo "Error inserting question and options: " . mysqli_error($db);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    // echo "Error updating the exam details: " . mysqli_error($db);
+    return false;
+}
+function updateExam()
+{
+    $db = $GLOBALS['db'];
+
+    // Extract and sanitize data from the form
+    $exam_title = mysqli_real_escape_string($db, $_POST['exam_title']);
+    $time_allot = mysqli_real_escape_string($db, $_POST['time_allot']);
+    $exam_id = mysqli_real_escape_string($db, $_POST['exam_id']); // Replace with your method of obtaining the exam_id
+
+    // Validate input data
+    if (empty($exam_title)) {
+        echo "Please enter an exam title.";
+        return false;
+    }
+
+    if (empty($time_allot)) {
+        echo "Please enter the time allotted for the exam.";
+        return false;
+    }
+
+    // Update the exam details in the 'exams' table
+    $query = "UPDATE exams SET exam_title = '$exam_title', time_alloted = '$time_allot' WHERE exam_id = '$exam_id'";
+    $result = mysqli_query($db, $query);
+
+    if ($result) {
+        // Assuming you have a way to fetch and update questions and options
+        if (isset($_POST['question']) && isset($_POST['option1']) && isset($_POST['option2'])) {
+            $questions = $_POST['question'];
+            $options1 = $_POST['option1'];
+            $options2 = $_POST['option2'];
+
+            for ($i = 0; $i < count($questions); $i++) {
+                $question = mysqli_real_escape_string($db, $questions[$i]);
+                $option1 = mysqli_real_escape_string($db, $options1[$i]);
+                $option2 = mysqli_real_escape_string($db, $options2[$i]);
+
+
+                // Update or insert the question and options based on your application logic
+                // You should handle potential errors here and return appropriate messages
+                $query = "UPDATE exam_questionnaire SET question='$question', option_1='$option1', option_2='$option2' WHERE exam_id = '$exam_id'";
+                $result = mysqli_query($db, $query);
+
+                if (!$result) {
+                    echo "Error inserting question and options: " . mysqli_error($db);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
+    // echo "Error updating the exam details: " . mysqli_error($db);
+    return false;
+}
+
+
+function create_exam($exam_title, $exam_desc, $total_marks, $due_date, $course_id, $questions, $options) {
+    $db = $GLOBALS['db'];
+    
+    // Insert exam details into the 'exams' table
+    $query = "INSERT INTO exams (title, description, total_marks, due_date, course_id) 
+              VALUES ('$exam_title', '$exam_desc', '$total_marks', '$due_date', '$course_id')";
+    $result = mysqli_query($db, $query);
+
+    if ($result) {
+        $exam_id = mysqli_insert_id($db); // Get the auto-generated exam ID
+
+        // Loop through questions and options and insert them into the 'questionnaire' table
+        for ($i = 0; $i < count($questions); $i++) {
+            $question = mysqli_real_escape_string($db, $questions[$i]);
+            $option1 = mysqli_real_escape_string($db, $options[$i]['option1']);
+            $option2 = mysqli_real_escape_string($db, $options[$i]['option2']);
+
+            $query = "INSERT INTO exam_questionnaire (exam_id, question, option1, option2) 
+                      VALUES ('$exam_id', '$question', '$option1', '$option2')";
+            $result = mysqli_query($db, $query);
+
+            if (!$result) {
+                // Handle error if the question couldn't be inserted
+                // You can choose to roll back the transaction or take appropriate action
+            }
+        }
+
+        return true; // Exam creation was successful
+    } else {
+        return false; // Exam creation failed
+    }
+}
+
 function student_login() {
     global $db;
 
@@ -55,6 +342,38 @@ function get_student_courses($std_id, $semester) {
 
     return $courses;
 }
+function get_teacher_courses($ins_id) {
+    $db = $GLOBALS['db'];
+    $courses = [];
+
+    // Assuming you have a table named 'student_courses' with columns 'std_id', 'course_id', and 'semester'
+    $query = "SELECT course_id FROM courses WHERE teacher_id = '$ins_id'";
+    $result = mysqli_query($db, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $courses[] = $row['course_id'];
+        }
+    }
+
+    return $courses;
+}
+function get_teacher_exams($ins_id) {
+    $db = $GLOBALS['db'];
+    $exams = [];
+
+    // Assuming you have a table named 'student_courses' with columns 'std_id', 'course_id', and 'semester'
+    $query = "SELECT exam_id FROM exams WHERE teacher_id = '$ins_id'";
+    $result = mysqli_query($db, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $exams[] = $row['exam_id'];
+        }
+    }
+
+    return $exams;
+}
 function get_course_details($course_id) {
     $db = $GLOBALS['db'];
     
@@ -69,8 +388,937 @@ function get_course_details($course_id) {
     
     return null;  // Return null if course details not found
 }
+function get_exam_details($exam_id) {
+    $db = $GLOBALS['db'];
+    
+    // Assuming you have a table named 'courses' with relevant columns
+    $query = "SELECT * FROM exams WHERE exam_id = '$exam_id'";
+    $result = mysqli_query($db, $query);
+    
+    if ($result && mysqli_num_rows($result) > 0) {
+        $exam_details = mysqli_fetch_assoc($result);
+        return $exam_details;
+    }
+    
+    return null;  // Return null if course details not found
+}
+function get_question_details($exam_id) {
+    $db = $GLOBALS['db'];
+    
+    // Assuming you have a table named 'exam_questionnaire' with relevant columns
+    $query = "SELECT * FROM exam_questionnaire WHERE exam_id = '$exam_id'";
+    $result = mysqli_query($db, $query);
+    
+    $question_details = array(); // Create an array to store question details
+    
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            // Append each row to the array
+            $question_details[] = $row;
+        }
+    }
+    
+    return $question_details;
+}
+
+function get_content_details($course_id) {
+    $db = $GLOBALS['db'];
+
+    // Assuming you have a table named 'courses' with relevant columns
+    $query = "SELECT * FROM course_content WHERE course_id = '$course_id'";
+    $result = mysqli_query($db, $query);
+
+    $course_details = array();
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $course_details[] = $row;
+        }
+    }
+
+    return $course_details;
+}
+
+function instructor_login() {
+    global $db;
+
+    $empId = mysqli_real_escape_string($db, $_POST['empl_id']);
+    $pass = mysqli_real_escape_string($db, $_POST['password']);
+
+    $user_query = "SELECT * FROM `instructor` WHERE `employee_id`='$empId' AND `instructor_password`='$pass'";
+    $users_results = mysqli_query($db, $user_query);
+
+    if ($users_results) {
+        if (mysqli_num_rows($users_results) === 1) {
+            $user = mysqli_fetch_assoc($users_results);
+
+            // Set session variables for the logged-in user using the registration number
+            $_SESSION['instructor'] = $user;
+    // Add more session variables as needed
+
+    // Redirect to the student portal
+    echo '<script>alert("Login Successful"); window.location = "teacherportal.php";</script>';
+exit();
+} else {
+// If login fails, show an error alert
+echo '
+<script>alert("Wrong credentials. Please try again."); window.location = "instructorlogin.php";</script>';
+exit();
+}
+} else {
+// Database query error
+echo '
+<script>alert("Something went wrong. Please try again later."); window.location = "instructorlogin.php";</script>';
+exit();
+}
+}
+
+function admin_login() {
+    global $db;
+
+    $empId = mysqli_real_escape_string($db, $_POST['empl_id']);
+    $pass = mysqli_real_escape_string($db, $_POST['password']);
+
+    $user_query = "SELECT * FROM `admin` WHERE `employee_id`='$empId' AND `admin_password`='$pass'";
+    $users_results = mysqli_query($db, $user_query);
+
+    if ($users_results) {
+        if (mysqli_num_rows($users_results) === 1) {
+            $user = mysqli_fetch_assoc($users_results);
+
+            // Set session variables for the logged-in user using the registration number
+            $_SESSION['admin'] = $user;
+    // Add more session variables as needed
+
+    // Redirect to the student portal
+    echo '<script>alert("Login Successful"); window.location = "adminportal.php";</script>';
+exit();
+} else {
+// If login fails, show an error alert
+echo '
+<script>alert("Wrong credentials. Please try again."); window.location = "adminlogin.php";</script>';
+exit();
+}
+} else {
+// Database query error
+echo '
+<script>alert("Something went wrong. Please try again later."); window.location = "adminlogin.php";</script>';
+exit();
+}
+}
+
+function qa_login() {
+    global $db;
+
+    $empId = mysqli_real_escape_string($db, $_POST['empl_id']);
+    $pass = mysqli_real_escape_string($db, $_POST['password']);
+
+    $user_query = "SELECT * FROM `qa_officer` WHERE `employee_id`='$empId' AND `qa_password`='$pass'";
+    $users_results = mysqli_query($db, $user_query);
+
+    if ($users_results) {
+        if (mysqli_num_rows($users_results) === 1) {
+            $user = mysqli_fetch_assoc($users_results);
+
+            // Set session variables for the logged-in user using the registration number
+            $_SESSION['qa_officer'] = $user;
+    // Add more session variables as needed
+
+    // Redirect to the student portal
+    echo '<script>alert("Login Successful"); window.location = "qaofficerportal.php";</script>';
+exit();
+} else {
+// If login fails, show an error alert
+echo '
+<script>alert("Wrong credentials. Please try again."); window.location = "qalogin.php";</script>';
+exit();
+}
+} else {
+// Database query error
+echo '
+<script>alert("Something went wrong. Please try again later."); window.location = "qalogin.php";</script>';
+exit();
+}
+}
 
 
+function progco_login() {
+    global $db;
+
+    $empId = mysqli_real_escape_string($db, $_POST['empl_id']);
+    $pass = mysqli_real_escape_string($db, $_POST['password']);
+
+    $user_query = "SELECT * FROM `program_coordinator` WHERE `employee_id`='$empId' AND `program_co_password`='$pass'";
+    $users_results = mysqli_query($db, $user_query);
+
+    if ($users_results) {
+        if (mysqli_num_rows($users_results) === 1) {
+            $user = mysqli_fetch_assoc($users_results);
+
+            // Set session variables for the logged-in user using the registration number
+            $_SESSION['program_coordinator'] = $user;
+    // Add more session variables as needed
+
+    // Redirect to the student portal
+    echo '<script>alert("Login Successful"); window.location = "programcoordinatorportal.php";</script>';
+exit();
+} else {
+// If login fails, show an error alert
+echo '
+<script>alert("Wrong credentials. Please try again."); window.location = "programcologin.php";</script>';
+exit();
+}
+} else {
+// Database query error
+echo '
+<script>alert("Something went wrong. Please try again later."); window.location = "programcologin.php";</script>';
+exit();
+}
+}
+function submitStundet()
+{
+    $db = $GLOBALS['db'];
+    $name = mysqli_real_escape_string($db, $_POST['name']);
+    $fatherName = mysqli_real_escape_string($db, $_POST['fatherName']);
+    $department = mysqli_real_escape_string($db, $_POST['department']);
+    $email = mysqli_real_escape_string($db, $_POST['email']);
+    $password = mysqli_real_escape_string($db, $_POST['password']);
+    $regNumber = mysqli_real_escape_string($db, $_POST['regNumber']);
+    $program = mysqli_real_escape_string($db, $_POST['program']);
+    $phoneNumber = mysqli_real_escape_string($db, $_POST['phoneNumber']);
+    $idNumber = mysqli_real_escape_string($db, $_POST['idNumber']);
+    $semester = mysqli_real_escape_string($db, $_POST['semester']);
+    $year = mysqli_real_escape_string($db, $_POST['year']);
+    $fileName = basename($_FILES["image"]["name"]);
+    $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+    $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+    if (in_array($fileType, $allowTypes) && !empty($name) && !empty($fatherName) && !empty($department) && !empty($email) && !empty($regNumber) && !empty($program) && !empty($phoneNumber) && !empty($idNumber) && !empty($semester) && !empty($year)) {
+        $image = $_FILES['image']['tmp_name'];
+        $imgContent = addslashes(file_get_contents($image));
+        $inserStudent = mysqli_query($db, "INSERT INTO `student` (`std_name`, `std_father_name`, `std_reg_no`, `std_identity_no`, `std_dept`, `std_program`, `std_semester`, `std_admission_year`, `std_email`, `std_phone_no`, `std_password`,`std_image`) 
+        VALUES ('{$name}', '{$fatherName}', '{$regNumber}', '{$idNumber}', '{$department}', '{$program}', '{$semester}', '{$year}', '{$email}', '{$phoneNumber}', '{$password}', '{$imgContent}')");
+        if ($inserStudent) {
+            return true;
+        } else {
+            echo "Error: " . mysqli_error($db);
+        }
+    } else {
+        var_dump($_FILES);
+        exit();
+    }
+}
+
+function updateStudent($check)
+{
+    if ($check) {
+        $db = $GLOBALS['db'];
+        $std_id = mysqli_real_escape_string($db, $_POST['std_id']);
+        $name = mysqli_real_escape_string($db, $_POST['name']);
+        $fatherName = mysqli_real_escape_string($db, $_POST['fatherName']);
+        $department = mysqli_real_escape_string($db, $_POST['department']);
+        $email = mysqli_real_escape_string($db, $_POST['email']);
+        $password = mysqli_real_escape_string($db, $_POST['password']);
+        $regNumber = mysqli_real_escape_string($db, $_POST['regNumber']);
+        $program = mysqli_real_escape_string($db, $_POST['program']);
+        $phoneNumber = mysqli_real_escape_string($db, $_POST['phoneNumber']);
+        $idNumber = mysqli_real_escape_string($db, $_POST['idNumber']);
+        $semester = mysqli_real_escape_string($db, $_POST['semester']);
+        $year = mysqli_real_escape_string($db, $_POST['year']);
+        $fileName = basename($_FILES["image"]["name"]);
+        $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+        $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+        if (in_array($fileType, $allowTypes) && !empty($std_id) && !empty($name) && !empty($fatherName) && !empty($department) && !empty($email) && !empty($regNumber) && !empty($program) && !empty($phoneNumber) && !empty($idNumber) && !empty($semester) && !empty($year)) {
+            $image = $_FILES['image']['tmp_name'];
+            $imgContent = addslashes(file_get_contents($image));
+            $updateStudentQuery = "UPDATE student SET 
+                std_name = '{$name}',
+                std_father_name = '{$fatherName}',
+                std_reg_no = '{$regNumber}',
+                std_identity_no = '{$idNumber}',
+                std_dept = '{$department}',
+                std_program = '{$program}',
+                std_semester = '{$semester}',
+                std_admission_year = '{$year}',
+                std_email = '{$email}',
+                std_phone_no = '{$phoneNumber}',
+                std_password = '{$password}',
+                std_image = '{$imgContent}'
+                WHERE std_id = '{$std_id}'";
+
+            if (mysqli_query($db, $updateStudentQuery)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    } else {
+        $db = $GLOBALS['db'];
+        $std_id = mysqli_real_escape_string($db, $_POST['std_id']);
+        $name = mysqli_real_escape_string($db, $_POST['name']);
+        $fatherName = mysqli_real_escape_string($db, $_POST['fatherName']);
+        $department = mysqli_real_escape_string($db, $_POST['department']);
+        $email = mysqli_real_escape_string($db, $_POST['email']);
+        $password = mysqli_real_escape_string($db, $_POST['password']);
+        $regNumber = mysqli_real_escape_string($db, $_POST['regNumber']);
+        $program = mysqli_real_escape_string($db, $_POST['program']);
+        $phoneNumber = mysqli_real_escape_string($db, $_POST['phoneNumber']);
+        $idNumber = mysqli_real_escape_string($db, $_POST['idNumber']);
+        $semester = mysqli_real_escape_string($db, $_POST['semester']);
+        $year = mysqli_real_escape_string($db, $_POST['year']);
+        if (!empty($std_id) && !empty($name) && !empty($fatherName) && !empty($department) && !empty($email) && !empty($regNumber) && !empty($program) && !empty($phoneNumber) && !empty($idNumber) && !empty($semester) && !empty($year)) {
+            $updateStudentQuery = "UPDATE student SET 
+            std_name = '{$name}',
+            std_father_name = '{$fatherName}',
+            std_reg_no = '{$regNumber}',
+            std_identity_no = '{$idNumber}',
+            std_dept = '{$department}',
+            std_program = '{$program}',
+            std_semester = '{$semester}',
+            std_admission_year = '{$year}',
+            std_email = '{$email}',
+            std_phone_no = '{$phoneNumber}',
+            std_password = '{$password}'
+            WHERE std_id = '{$std_id}'";
+
+            if (mysqli_query($db, $updateStudentQuery)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+}
+
+function getStudent($id)
+{
+    $db = $GLOBALS['db'];
+    $id = mysqli_real_escape_string($db, $id);
+    $retrieveStudent = mysqli_query($db, "SELECT * FROM `student` WHERE std_id = '{$id}'");
+    if ($retrieveStudent && mysqli_num_rows($retrieveStudent) > 0) {
+        return $retrieveStudent;
+    } else {
+        return false;
+    }
+}
+
+
+function getStudents()
+{
+    $db = $GLOBALS['db'];
+    $retrieveStudents = mysqli_query($db, "SELECT * FROM `student`");
+    if (mysqli_num_rows($retrieveStudents) > 0) {
+        return $retrieveStudents;
+
+    } else {
+        return false;
+    }
+}
+
+
+function deleteStudent()
+{
+    $db = $GLOBALS['db'];
+    if (isset($_POST['std_id'])) {
+        $std_id = mysqli_real_escape_string($db, $_POST['std_id']);
+        $delete_query = "DELETE FROM student WHERE std_id = $std_id";
+        if (mysqli_query($db, $delete_query)) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+
+function submitProgramCo()
+{
+    $db = $GLOBALS['db'];
+    $name = mysqli_real_escape_string($db, $_POST['name']);
+    $fatherName = mysqli_real_escape_string($db, $_POST['fatherName']);
+    $department = mysqli_real_escape_string($db, $_POST['department']);
+    $email = mysqli_real_escape_string($db, $_POST['email']);
+    $password = mysqli_real_escape_string($db, $_POST['password']);
+    $empId = mysqli_real_escape_string($db, $_POST['empId']);
+    $phoneNumber = mysqli_real_escape_string($db, $_POST['phoneNumber']);
+    $idNumber = mysqli_real_escape_string($db, $_POST['idNumber']);
+    $fileName = basename($_FILES["image"]["name"]);
+    $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+    $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+    if (in_array($fileType, $allowTypes) && !empty($name) && !empty($fatherName) && !empty($department) && !empty($email) && !empty($password) && !empty($empId) && !empty($phoneNumber) && !empty($idNumber)) {
+        $image = $_FILES['image']['tmp_name'];
+        $imgContent = addslashes(file_get_contents($image));
+        $insertProgramCo = mysqli_query($db, "INSERT INTO `program_coordinator` (`program_co_name`, `program_co_father_name`, `program_co_dept`, `program_co_email`, `program_co_password`, `employee_id`, `program_co_phone_no`, `program_co_identity_no`,`program_co_image`)
+        VALUES ('$name', '$fatherName', '$department', '$email', '$password', '$empId', '$phoneNumber', '$idNumber', '$imgContent')");
+        if ($insertProgramCo) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+
+function getProgramCo($id)
+{
+    $db = $GLOBALS['db'];
+    $id = mysqli_real_escape_string($db, $id);
+    $retrieveProgramCo = mysqli_query($db, "SELECT * FROM `program_coordinator` WHERE program_co_id = '{$id}'");
+    if ($retrieveProgramCo && mysqli_num_rows($retrieveProgramCo) > 0) {
+        return $retrieveProgramCo;
+    } else {
+        return false;
+    }
+}
+
+function getProgramCos()
+{
+    $db = $GLOBALS['db'];
+    $retrieveProgramCos = mysqli_query($db, "SELECT * FROM `program_coordinator`");
+    if (mysqli_num_rows($retrieveProgramCos) > 0) {
+        return $retrieveProgramCos;
+
+    } else {
+        return false;
+    }
+}
+
+function updatePrgramCo($check)
+{
+    if ($check) {
+        $db = $GLOBALS['db'];
+        $program_co_id = mysqli_real_escape_string($db, $_POST['program_co_id']);
+        $name = mysqli_real_escape_string($db, $_POST['name']);
+        $fatherName = mysqli_real_escape_string($db, $_POST['fatherName']);
+        $department = mysqli_real_escape_string($db, $_POST['department']);
+        $email = mysqli_real_escape_string($db, $_POST['email']);
+        $password = mysqli_real_escape_string($db, $_POST['password']);
+        $empId = mysqli_real_escape_string($db, $_POST['empId']);
+        $phoneNumber = mysqli_real_escape_string($db, $_POST['phoneNumber']);
+        $idNumber = mysqli_real_escape_string($db, $_POST['idNumber']);
+        $fileName = basename($_FILES["image"]["name"]);
+        $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+        $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+        if (in_array($fileType, $allowTypes) && !empty($name) && !empty($fatherName) && !empty($department) && !empty($email) && !empty($password) && !empty($empId) && !empty($phoneNumber) && !empty($idNumber)) {
+            $image = $_FILES['image']['tmp_name'];
+            $imgContent = addslashes(file_get_contents($image));
+            $updateProgramCo = mysqli_query($db, "UPDATE `program_coordinator` SET
+        `program_co_name` = '$name',
+        `program_co_father_name` = '$fatherName',
+        `program_co_dept` = '$department',
+        `program_co_email` = '$email',
+        `program_co_password` = '$password',
+        `employee_id` = '$empId',
+        `program_co_phone_no` = '$phoneNumber',
+        `program_co_identity_no` = '$idNumber',
+        `program_co_image` = '$imgContent'
+        WHERE `program_co_id` = $program_co_id");
+            if ($updateProgramCo) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    } else {
+        $db = $GLOBALS['db'];
+        $program_co_id = mysqli_real_escape_string($db, $_POST['program_co_id']);
+        $name = mysqli_real_escape_string($db, $_POST['name']);
+        $fatherName = mysqli_real_escape_string($db, $_POST['fatherName']);
+        $department = mysqli_real_escape_string($db, $_POST['department']);
+        $email = mysqli_real_escape_string($db, $_POST['email']);
+        $password = mysqli_real_escape_string($db, $_POST['password']);
+        $empId = mysqli_real_escape_string($db, $_POST['empId']);
+        $phoneNumber = mysqli_real_escape_string($db, $_POST['phoneNumber']);
+        $idNumber = mysqli_real_escape_string($db, $_POST['idNumber']);
+        if (!empty($name) && !empty($fatherName) && !empty($department) && !empty($email) && !empty($password) && !empty($empId) && !empty($phoneNumber) && !empty($idNumber)) {
+            $updateProgramCo = mysqli_query($db, "UPDATE `program_coordinator` SET
+        `program_co_name` = '$name',
+        `program_co_father_name` = '$fatherName',
+        `program_co_dept` = '$department',
+        `program_co_email` = '$email',
+        `program_co_password` = '$password',
+        `employee_id` = '$empId',
+        `program_co_phone_no` = '$phoneNumber',
+        `program_co_identity_no` = '$idNumber'
+        WHERE `program_co_id` = $program_co_id");
+            if ($updateProgramCo) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+}
+
+function deleteProgramCo()
+{
+    $db = $GLOBALS['db'];
+    if (isset($_POST['program_co_id'])) {
+        $program_co_id = mysqli_real_escape_string($db, $_POST['program_co_id']);
+        $delete_query = "DELETE FROM program_coordinator WHERE program_co_id = $program_co_id";
+        if (mysqli_query($db, $delete_query)) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+function getProgramCoPermission($id)
+{
+    $db = $GLOBALS['db'];
+    $id = mysqli_real_escape_string($db, $id);
+    $programCoPermissions = mysqli_query($db, "SELECT * FROM `programco_permissions` WHERE program_co_id = '{$id}'");
+    if ($programCoPermissions && mysqli_num_rows($programCoPermissions) > 0) {
+        return $programCoPermissions;
+    } else {
+        return false;
+    }
+}
+function updateProgramCoPermissions()
+{
+
+    $db = $GLOBALS['db'];
+    $program_co_id = mysqli_real_escape_string($db, $_POST['program_co_id']);
+    $checkboxes = array(
+        'View_Program_Objectives' => 7,
+        'Add/Update/Delete_Program_Objectives' => 8,
+        'View_Courses' => 9,
+        'Add/Update/Delete_Courses' => 10,
+        'View_Course_Content' => 11,
+        'Add/Update/Delete_Course_Content' => 12,
+        'View_Student_Performance' => 13,
+        'Add/Update/Delete_Student_Performance' => 14
+    );
+    foreach ($checkboxes as $checkbox_name => $checkbox_value) {
+        if (isset($_POST[$checkbox_name])) {
+            $check_query = "SELECT * FROM programco_permissions WHERE program_co_id = '$program_co_id' AND permission_id = '$checkbox_value'";
+            $result = mysqli_query($db, $check_query);
+            if (mysqli_num_rows($result) == 0) {
+                $query = "INSERT INTO programco_permissions (program_co_id, permission_id) VALUES ('$program_co_id', '$checkbox_value')";
+                mysqli_query($db, $query);
+            }
+        } else {
+            $query = "DELETE FROM programco_permissions WHERE program_co_id = '$program_co_id' AND permission_id = '$checkbox_value'";
+            mysqli_query($db, $query);
+        }
+    }
+}
+
+
+
+function submitInstructor()
+{
+    $db = $GLOBALS['db'];
+    $name = mysqli_real_escape_string($db, $_POST['name']);
+    $fatherName = mysqli_real_escape_string($db, $_POST['fatherName']);
+    $empId = mysqli_real_escape_string($db, $_POST['empId']);
+    $department = mysqli_real_escape_string($db, $_POST['department']);
+    $email = mysqli_real_escape_string($db, $_POST['email']);
+    $password = mysqli_real_escape_string($db, $_POST['password']);
+    $phoneNumber = mysqli_real_escape_string($db, $_POST['phoneNumber']);
+    $idNumber = mysqli_real_escape_string($db, $_POST['idNumber']);
+    $program = mysqli_real_escape_string($db, $_POST['program']);
+    $designation = mysqli_real_escape_string($db, $_POST['designation']);
+    $fileName = basename($_FILES["image"]["name"]);
+    $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+    $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+    if (in_array($fileType, $allowTypes) && !empty($name) && !empty($fatherName) && !empty($empId) && !empty($department) && !empty($email) && !empty($password) && !empty($phoneNumber) && !empty($idNumber) && !empty($program) && !empty($designation)) {
+        $image = $_FILES['image']['tmp_name'];
+        $imgContent = addslashes(file_get_contents($image));
+        $insertInstructor = mysqli_query($db, "INSERT INTO `instructor` (`instructor_name`, `instructor_father_name`, `employee_id`, `instructor_dept`, `instructor_email`, `instructor_password`, `instructor_phone_no`, `instructor_identity_no`, `instructor_program`, `instructor_designation`,`ins_image`)
+        VALUES ('$name', '$fatherName', '$empId', '$department', '$email', '$password', '$phoneNumber', '$idNumber', '$program', '$designation','$imgContent')");
+        if ($insertInstructor) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+function getInstructor($id)
+{
+    $db = $GLOBALS['db'];
+    $id = mysqli_real_escape_string($db, $id);
+    $retrieveInstructor = mysqli_query($db, "SELECT * FROM `instructor` WHERE instructor_id = '{$id}'");
+    if ($retrieveInstructor && mysqli_num_rows($retrieveInstructor) > 0) {
+        return $retrieveInstructor;
+    } else {
+        return false;
+    }
+}
+
+function getInstructors()
+{
+    $db = $GLOBALS['db'];
+    $retrieveInstructors = mysqli_query($db, "SELECT * FROM `instructor`");
+    if (mysqli_num_rows($retrieveInstructors) > 0) {
+        return $retrieveInstructors;
+
+    } else {
+        return false;
+    }
+}
+
+function updateInstructor($check)
+{
+    if ($check) {
+        $db = $GLOBALS['db'];
+        $instructor_id = mysqli_real_escape_string($db, $_POST['instructor_id']);
+        $name = mysqli_real_escape_string($db, $_POST['name']);
+        $fatherName = mysqli_real_escape_string($db, $_POST['fatherName']);
+        $empId = mysqli_real_escape_string($db, $_POST['empId']);
+        $department = mysqli_real_escape_string($db, $_POST['department']);
+        $email = mysqli_real_escape_string($db, $_POST['email']);
+        $password = mysqli_real_escape_string($db, $_POST['password']);
+        $phoneNumber = mysqli_real_escape_string($db, $_POST['phoneNumber']);
+        $idNumber = mysqli_real_escape_string($db, $_POST['idNumber']);
+        $program = mysqli_real_escape_string($db, $_POST['program']);
+        $designation = mysqli_real_escape_string($db, $_POST['designation']);
+        $fileName = basename($_FILES["image"]["name"]);
+        $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+        $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+        if (in_array($fileType, $allowTypes) && !empty($name) && !empty($fatherName) && !empty($empId) && !empty($department) && !empty($email) && !empty($password) && !empty($phoneNumber) && !empty($idNumber) && !empty($program) && !empty($designation)) {
+            $image = $_FILES['image']['tmp_name'];
+            $imgContent = addslashes(file_get_contents($image));
+            $updateInstructor = mysqli_query($db, "UPDATE `instructor` SET
+            `instructor_name` = '$name',
+            `instructor_father_name` = '$fatherName',
+            `employee_id` = '$empId',
+            `instructor_dept` = '$department',
+            `instructor_email` = '$email',
+            `instructor_password` = '$password',
+            `instructor_phone_no` = '$phoneNumber',
+            `instructor_identity_no` = '$idNumber',
+            `instructor_program` = '$program',
+            `instructor_designation` = '$designation',
+            `ins_image` = '$imgContent'
+            WHERE `instructor_id` = $instructor_id");
+
+            if ($updateInstructor) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    } else {
+        $db = $GLOBALS['db'];
+        $instructor_id = mysqli_real_escape_string($db, $_POST['instructor_id']);
+        $name = mysqli_real_escape_string($db, $_POST['name']);
+        $fatherName = mysqli_real_escape_string($db, $_POST['fatherName']);
+        $empId = mysqli_real_escape_string($db, $_POST['empId']);
+        $department = mysqli_real_escape_string($db, $_POST['department']);
+        $email = mysqli_real_escape_string($db, $_POST['email']);
+        $password = mysqli_real_escape_string($db, $_POST['password']);
+        $phoneNumber = mysqli_real_escape_string($db, $_POST['phoneNumber']);
+        $idNumber = mysqli_real_escape_string($db, $_POST['idNumber']);
+        $program = mysqli_real_escape_string($db, $_POST['program']);
+        $designation = mysqli_real_escape_string($db, $_POST['designation']);
+        if (!empty($name) && !empty($fatherName) && !empty($empId) && !empty($department) && !empty($email) && !empty($password) && !empty($phoneNumber) && !empty($idNumber) && !empty($program) && !empty($designation)) {
+            $updateInstructor = mysqli_query($db, "UPDATE `instructor` SET
+        `instructor_name` = '$name',
+        `instructor_father_name` = '$fatherName',
+        `employee_id` = '$empId',
+        `instructor_dept` = '$department',
+        `instructor_email` = '$email',
+        `instructor_password` = '$password',
+        `instructor_phone_no` = '$phoneNumber',
+        `instructor_identity_no` = '$idNumber',
+        `instructor_program` = '$program',
+        `instructor_designation` = '$designation'
+        WHERE `instructor_id` = $instructor_id");
+
+            if ($updateInstructor) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+}
+
+function deleteInstructor()
+{
+    $db = $GLOBALS['db'];
+    if (isset($_POST['instructor_id'])) {
+        $instructor_id = mysqli_real_escape_string($db, $_POST['instructor_id']);
+        $delete_query = "DELETE FROM instructor WHERE instructor_id = $instructor_id";
+        if (mysqli_query($db, $delete_query)) {
+            return true;
+        } else {
+            echo "Error: " . mysqli_error($db);
+            exit();
+        }
+    } else {
+        echo "Error: " . mysqli_error($db);
+        exit();
+    }
+}
+
+
+
+function getInstructorPermission($id)
+{
+    $db = $GLOBALS['db'];
+    $id = mysqli_real_escape_string($db, $id);
+    $instructorPermissions = mysqli_query($db, "SELECT * FROM `instructor_permissions` WHERE instructor_id = '{$id}'");
+    if ($instructorPermissions && mysqli_num_rows($instructorPermissions) > 0) {
+        return $instructorPermissions;
+    } else {
+        return false;
+    }
+}
+function updateInstructorPermissions()
+{
+    $db = $GLOBALS['db'];
+    $instructor_id = mysqli_real_escape_string($db, $_POST['instructor_id']);
+    $checkboxes = array(
+        'View_Courses' => 1,
+        'Add/Update/Delete_Courses' => 2,
+        'View_Course_Content' => 3,
+        'Add/Update/Delete_Course_Content' => 4,
+        'View_Results' => 5,
+        'Update_Results' => 6
+    );
+    foreach ($checkboxes as $checkbox_name => $checkbox_value) {
+        if (isset($_POST[$checkbox_name])) {
+            $check_query = "SELECT * FROM instructor_permissions WHERE instructor_id = '$instructor_id' AND permission_id = '$checkbox_value'";
+            $result = mysqli_query($db, $check_query);
+            if (mysqli_num_rows($result) == 0) {
+                $query = "INSERT INTO instructor_permissions (instructor_id, permission_id) VALUES ('$instructor_id', '$checkbox_value')";
+                mysqli_query($db, $query);
+            }
+        } else {
+            $query = "DELETE FROM instructor_permissions WHERE instructor_id = '$instructor_id' AND permission_id = '$checkbox_value'";
+            mysqli_query($db, $query);
+        }
+    }
+}
+
+
+function submitQA()
+{
+    $db = $GLOBALS['db'];
+    $name = mysqli_real_escape_string($db, $_POST['name']);
+    $fatherName = mysqli_real_escape_string($db, $_POST['fatherName']);
+    $department = mysqli_real_escape_string($db, $_POST['department']);
+    $email = mysqli_real_escape_string($db, $_POST['email']);
+    $password = mysqli_real_escape_string($db, $_POST['password']);
+    $empId = mysqli_real_escape_string($db, $_POST['empId']);
+    $phoneNumber = mysqli_real_escape_string($db, $_POST['phoneNumber']);
+    $idNumber = mysqli_real_escape_string($db, $_POST['idNumber']);
+    $fileName = basename($_FILES["image"]["name"]);
+    $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+    $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+    if (in_array($fileType, $allowTypes) && !empty($name) && !empty($fatherName) && !empty($department) && !empty($email) && !empty($password) && !empty($empId) && !empty($phoneNumber) && !empty($idNumber)) {
+        $image = $_FILES['image']['tmp_name'];
+        $imgContent = addslashes(file_get_contents($image));
+        $insertProgramCo = mysqli_query($db, "INSERT INTO `qa_officer` (`qa_name`, `qa_father_name`, `qa_dept`, `qa_email`, `qa_password`, `employee_id`, `qa_phone_no`, `qa_identity_no`,`qa_image`)
+        VALUES ('$name', '$fatherName', '$department', '$email', '$password', '$empId', '$phoneNumber', '$idNumber', '$imgContent')");
+        if ($insertProgramCo) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+
+function getQA($id)
+{
+    $db = $GLOBALS['db'];
+    $id = mysqli_real_escape_string($db, $id);
+    $retrieveQA = mysqli_query($db, "SELECT * FROM `qa_officer` WHERE qa_id = '{$id}'");
+    if ($retrieveQA && mysqli_num_rows($retrieveQA) > 0) {
+        return $retrieveQA;
+    } else {
+        return false;
+    }
+}
+
+function getQAs()
+{
+    $db = $GLOBALS['db'];
+    $retrieveQA = mysqli_query($db, "SELECT * FROM `qa_officer`");
+    if (mysqli_num_rows($retrieveQA) > 0) {
+        return $retrieveQA;
+
+    } else {
+        return false;
+    }
+}
+
+function updateQA($check)
+{
+    if ($check) {
+        $db = $GLOBALS['db'];
+        $qa_id = mysqli_real_escape_string($db, $_POST['qa_id']);
+        $name = mysqli_real_escape_string($db, $_POST['name']);
+        $fatherName = mysqli_real_escape_string($db, $_POST['fatherName']);
+        $department = mysqli_real_escape_string($db, $_POST['department']);
+        $email = mysqli_real_escape_string($db, $_POST['email']);
+        $password = mysqli_real_escape_string($db, $_POST['password']);
+        $empId = mysqli_real_escape_string($db, $_POST['empId']);
+        $phoneNumber = mysqli_real_escape_string($db, $_POST['phoneNumber']);
+        $idNumber = mysqli_real_escape_string($db, $_POST['idNumber']);
+        $fileName = basename($_FILES["image"]["name"]);
+        $fileType = pathinfo($fileName, PATHINFO_EXTENSION);
+        $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+        if (in_array($fileType, $allowTypes) && !empty($name) && !empty($fatherName) && !empty($department) && !empty($email) && !empty($password) && !empty($empId) && !empty($phoneNumber) && !empty($idNumber)) {
+            $image = $_FILES['image']['tmp_name'];
+            $imgContent = addslashes(file_get_contents($image));
+            $updateQA = mysqli_query($db, "UPDATE `qa_officer` SET
+        `qa_name` = '$name',
+        `qa_father_name` = '$fatherName',
+        `qa_dept` = '$department',
+        `qa_email` = '$email',
+        `qa_password` = '$password',
+        `employee_id` = '$empId',
+        `qa_phone_no` = '$phoneNumber',
+        `qa_identity_no` = '$idNumber',
+        `qa_image` = '$imgContent'
+        WHERE `qa_id` = $qa_id");
+            if ($updateQA) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    } else {
+        $db = $GLOBALS['db'];
+        $qa_id = mysqli_real_escape_string($db, $_POST['qa_id']);
+        $name = mysqli_real_escape_string($db, $_POST['name']);
+        $fatherName = mysqli_real_escape_string($db, $_POST['fatherName']);
+        $department = mysqli_real_escape_string($db, $_POST['department']);
+        $email = mysqli_real_escape_string($db, $_POST['email']);
+        $password = mysqli_real_escape_string($db, $_POST['password']);
+        $empId = mysqli_real_escape_string($db, $_POST['empId']);
+        $phoneNumber = mysqli_real_escape_string($db, $_POST['phoneNumber']);
+        $idNumber = mysqli_real_escape_string($db, $_POST['idNumber']);
+        if (!empty($name) && !empty($fatherName) && !empty($department) && !empty($email) && !empty($password) && !empty($empId) && !empty($phoneNumber) && !empty($idNumber)) {
+            $updateQA = mysqli_query($db, "UPDATE `qa_officer` SET
+        `qa_name` = '$name',
+        `qa_father_name` = '$fatherName',
+        `qa_dept` = '$department',
+        `qa_email` = '$email',
+        `qa_password` = '$password',
+        `employee_id` = '$empId',
+        `qa_phone_no` = '$phoneNumber',
+        `qa_identity_no` = '$idNumber'
+        WHERE `qa_id` = $qa_id");
+            if ($updateQA) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+}
+
+function deleteQA()
+{
+    $db = $GLOBALS['db'];
+    if (isset($_POST['program_co_id'])) {
+        $program_co_id = mysqli_real_escape_string($db, $_POST['program_co_id']);
+        $delete_query = "DELETE FROM program_coordinator WHERE program_co_id = $program_co_id";
+        if (mysqli_query($db, $delete_query)) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+function getQAPermissions($id)
+{
+    $db = $GLOBALS['db'];
+    $id = mysqli_real_escape_string($db, $id);
+    $qaPermissions = mysqli_query($db, "SELECT * FROM `qa_permissions` WHERE qa_id = '{$id}'");
+    if ($qaPermissions && mysqli_num_rows($qaPermissions) > 0) {
+        return $qaPermissions;
+    } else {
+        return false;
+    }
+}
+function updateQAPermissions()
+{
+
+    $db = $GLOBALS['db'];
+    $qa_id = mysqli_real_escape_string($db, $_POST['qa_id']);
+    $checkboxes = array(
+        'View_Program_Policies' => 15,
+        'Add/Update/Delete_Program_Policies' => 16,
+        'View_Program_Objectives' => 17,
+        'Add/Update/Delete_Program_Objectives' => 18,
+        'View_Courses' => 19,
+        'Add/Update/Delete_Courses' => 20,
+        'View_Course_Content' => 21,
+        'Add/Update/Delete_Course_Content' => 22,
+    );
+    foreach ($checkboxes as $checkbox_name => $checkbox_value) {
+        if (isset($_POST[$checkbox_name])) {
+            $check_query = "SELECT * FROM qa_permissions WHERE qa_id = '$qa_id' AND permission_id = '$checkbox_value'";
+            $result = mysqli_query($db, $check_query);
+            if (mysqli_num_rows($result) == 0) {
+                $query = "INSERT INTO qa_permissions (qa_id, permission_id) VALUES ('$qa_id', '$checkbox_value')";
+                mysqli_query($db, $query);
+            }
+        } else {
+            $query = "DELETE FROM qa_permissions WHERE qa_id = '$qa_id' AND permission_id = '$checkbox_value'";
+            mysqli_query($db, $query);
+        }
+    }
+}
+
+
+function getSpecificPermission($typeId)
+{
+    $db = $GLOBALS['db'];
+    $id = mysqli_real_escape_string($db, $typeId);
+    $permissions = mysqli_query($db, "SELECT * FROM `permissions` WHERE permission_allow = '{$typeId}'");
+    if ($permissions && mysqli_num_rows($permissions) > 0) {
+        return $permissions;
+    } else {
+        return false;
+    }
+}
+
+
+
+
+// if ($insert_student) {
+//     echo "Student inserted successfully.";
+// } else {
+//     echo "Error: " . mysqli_error($db);
+// }
 // function user_login() {
 // 	$db = $GLOBALS['db'];
 // 	$email = mysqli_real_escape_string($db, $_POST['login_id']);

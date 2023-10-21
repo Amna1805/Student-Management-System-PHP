@@ -1,3 +1,17 @@
+<?php
+// Start or resume session
+include_once('functions.php');
+// Check if the user is logged in
+if (!isset($_SESSION['instructor'])) {
+    // If not logged in, redirect to login page
+    header("Location: instructorlogin.php");
+    exit();
+}
+if (isset($_POST['create_exam'])) {
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,9 +25,88 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Jacques+Francois&display=swap" rel="stylesheet">
     <title>Student Exams</title>
+   
+       <script type="text/javascript">
+    function validateForm() {
+        console.log("calles")
+        var examTitle = document.getElementById("exam_title").value;
+        var examDesc = document.getElementById("exam_desc").value;
+        var examCourse = document.getElementById("exam_course").value;
+        var timeAlloted = document.getElementById("time_alloted").value;
+
+        // Regular expression pattern for valid characters (letters, spaces, full stops, and commas)
+        var validChars = /^[a-zA-Z ,.]+$/;
+
+        if (!validChars.test(examTitle)) {
+            alert("Invalid exam title. Only letters, spaces, full stops, and commas are allowed.");
+            return false;
+        }
+
+        if (!validChars.test(examDesc)) {
+            alert("Invalid exam description. Only letters, spaces, full stops, and commas are allowed.");
+            return false;
+        }
+
+        if (examCourse === "") {
+            alert("Please select a course.");
+            return false;
+        }
+
+        // Validate time allotted (customize the regex pattern as needed)
+        var timeAllotedRegex = /^\d+(\.\d+)?$/;
+        if (!timeAllotedRegex.test(timeAlloted)) {
+            alert("Invalid time allotted. Please enter a valid number.");
+            return false;
+        }
+
+        // Validate questions and options
+        for (var i = 1; i <= 10; i++) {
+            var question = document.getElementById("question" + i).value;
+            var option1 = document.getElementById("question" + i + "_option1").value;
+            var option2 = document.getElementById("question" + i + "_option2").value;
+
+            if (!validChars.test(question)) {
+                alert("Invalid question for Question " + i + ". Only letters, spaces, full stops, and commas are allowed.");
+                return false;
+            }
+
+            if (!validChars.test(option1)) {
+                alert("Invalid option 1 for Question " + i + ". Only letters, spaces, full stops, and commas are allowed.");
+                return false;
+            }
+
+            if (!validChars.test(option2)) {
+                alert("Invalid option 2 for Question " + i + ". Only letters, spaces, full stops, and commas are allowed.");
+                return false;
+            }
+        }
+
+        // If all validations pass, the form will submit
+        return true;
+    }
+</script>
+<style>
+        .custom-select {
+    background-color: #5295c2;
+    color: white; /* text color */
+    border-radius: 10px; /* adjust as needed */
+    padding: 5px; /* adjust as needed */
+    /* Add other styles as needed */
+}
+
+        </style>
+
 </head>
 
 <body>
+<?php
+ if (isset($_SESSION['instructor'])) {
+     // Access the student's information
+     $instructor = $_SESSION['instructor'];
+     $teacher_id=$instructor['instructor_id'];
+  $courses = get_teacher_courses($teacher_id);
+ } 
+ ?>
     <header id="schoolify-header">
         <nav>
             <input type="checkbox" id="check" style="color: transparent">
@@ -53,227 +146,64 @@
         </nav>
         <section></section>
     </header>
+    <form method="POST" onsubmit="return validateForm();">
+
     <section class="exam-info-section">
-        <div class="exam-info">
-            <div class="exam-info-heading">
-                <input type="text" placeholder="Exam Title" name="exam_title">
+    <div class="exam-info">
+        <div class="exam-info-heading">
+            <input type="text" placeholder="Exam Title" name="exam_title" id="exam_title" autofocus>
+        </div>
+        <div class="exam-info-heading">
+            <input type="text" placeholder="Exam Desc" name="exam_desc" id="exam_desc">
+        </div>
+        <div class="exam-info-heading">
+            <select name="exam_course" class="custom-select" id="exam_course">
+                <option value="">Select a Course</option>
+                <?php
+                foreach ($courses as $course) { 
+                    $course_det = get_course_details($course);
+                ?>
+                <option value="<?php echo $course_det['course_id']?>" style="color:blue;"><?php echo $course_det['course_title']; ?></option>
+                <?php } ?>
+            </select>
+        </div>
+        <div class="time-remaining">
+            <input type="date" placeholder="due_date" name="due_date" id="due_date">
+        </div>
+    </div>
+
+    <div class="exam-mcqs">
+        <?php for ($i = 1; $i <= 10; $i++) { ?>
+        <div class="mcq">
+            <div class="questionsdiv">
+                <p><?php echo $i; ?>.</p>
+                <input class="question" type="text" placeholder="Question <?php echo $i; ?>" name="question<?php echo $i; ?>" id="question<?php echo $i; ?>">
             </div>
-            <div class="time-remaining">
-                <span>Time Remaining: </span>
-                <input type="text" placeholder="Time Remaining" name="time_remaining">
+
+            <div class="optionsdiv">
+                <label>
+                    <input type="radio" name="question<?php echo $i; ?>_option" value="option1" id="question<?php echo $i; ?>_option1">
+                    <input type="text" class="option" placeholder="Option 1" name="question<?php echo $i; ?>_option1">
+                </label>
+            </div>
+
+            <div class="optionsdiv">
+                <label>
+                    <input type="radio" name="question<?php echo $i; ?>_option" value="option2" id="question<?php echo $i; ?>_option2">
+                    <input type="text" class="option" placeholder="Option 2" name="question<?php echo $i; ?>_option2">
+                </label>
             </div>
         </div>
+        <?php } ?>
+    </div>
+</section>
 
-        <div class="exam-mcqs">
-            <!-- MCQ 1 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>1.</p><input class="question" type="text" placeholder="Question 1" name="question1">
-                </div>
+   
 
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question1_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question1_option1">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question1_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question1_option2">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 2 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>2.</p><input class="question" type="text" placeholder="Question 2" name="question2">
-                </div>
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question2_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question2_option1">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question2_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question2_option2">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 3 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>3.</p><input class="question" type="text" placeholder="Question 3" name="question3">
-                </div>
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question3_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question3_option1">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question3_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question3_option2">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 4 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>4.</p><input class="question" type="text" placeholder="Question 4" name="question4">
-                </div>
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question4_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question4_option1">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question4_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question4_option2">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 5 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>5.</p>
-                    <input class="question" type="text" placeholder="Question 5" name="question5">
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question5_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question5_option1">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question5_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question5_option2">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 6 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>6.</p><input class="question" type="text" placeholder="Question 6" name="question6">
-                </div>
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question6_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question6_option1">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question6_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question6_option2">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 7 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>7.</p><input class="question" type="text" placeholder="Question 7" name="question7">
-                </div>
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question7_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question7_option1">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question7_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question7_option2">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 8 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>8.</p><input class="question" type="text" placeholder="Question 8" name="question8">
-                </div>
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question8_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question8_option1">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question8_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question8_option2">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 9 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>9.</p><input class="question" type="text" placeholder="Question 9" name="question9">
-                </div>
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question9_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question9_option1">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question9_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question9_option2">
-                    </label>
-                </div>
-            </div>
-
-            <!-- MCQ 10 -->
-            <div class="mcq">
-                <div class="questionsdiv">
-                    <p>10.</p><input class="question" type="text" placeholder="Question 10" name="question10">
-                </div>
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question10_option" value="option1">
-                        <input type="text" class="option" placeholder="Option 1" name="question10_option1">
-                    </label>
-                </div>
-
-                <div class="optionsdiv">
-                    <label>
-                        <input type="radio" name="question10_option" value="option2">
-                        <input type="text" class="option" placeholder="Option 2" name="question10_option2">
-                    </label>
-                </div>
-            </div>
-
-            <div class="create-button">
-                <button type="submit">Create</button>
-            </div>
-        </div>
-    </section>
-
+    <div class="create-button">
+        <button type="submit"  name="create_exam">Create</button>
+    </div>
+</form>
 
     <!-- Footer -->
     <footer>

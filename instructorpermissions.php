@@ -1,3 +1,32 @@
+<?php
+include_once('functions.php');
+if (isset($_GET['instructor_id'])) {
+    $instructor = getInstructor($_GET['instructor_id']);
+    $instructorData = mysqli_fetch_assoc($instructor);
+    $instructorPermissions = getInstructorPermission($_GET['instructor_id']);
+    $allPermissions = getSpecificPermission(1);
+    $checkedArray[] = "0";
+    if ($instructorPermissions) {
+        while ($row = mysqli_fetch_assoc($instructorPermissions)) {
+            $checkedArray[] = $row['permission_id'];
+        }
+    }
+} else {
+    header('location:adminInstructorPage.php');
+}
+
+if (isset($_POST['update_instrcutor'])) {
+    if (updateInstructorPermissions()) {
+        echo '<script>alert("Instructor Added Succesfully!")</script>';
+        header('Location: instructorpermissions.php?instructor_id=' . $_POST['instructor_id']);
+    } else {
+        echo '<script>alert("Failed!")</script>';
+        header('Location: instructorpermissions.php?instructor_id=' . $_POST['instructor_id']);
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -52,54 +81,55 @@
 
     <div class="officer-section">
         <h2>Instructor</h2>
-        <p>Employee ID: 123456</p>
-        <p>Name: John Doe</p>
-        <p>Designation: Associate Professor</p>
+        <p>Employee ID:
+            <?php echo $instructorData['employee_id'] ?>
+        </p>
+        <p>Name:
+            <?php echo $instructorData['instructor_name'] ?>
+        </p>
+        <p>Designation:
+            <?php echo $instructorData['instructor_designation'] ?>
+        </p>
     </div>
     <!---PERMISSIONS-->
     <h1 class="heading">PERMISSIONS</h1>
     <div class="student-information">
-        <div class="responsivetable">
-            <table class="student-table">
-                <thead>
-                    <tr>
-                        <th>Action</th>
-                        <th>Permissions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>View Courses</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>Add/Update/Delete Courses</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>View Course Content</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>Add/Update/Delete Course Content</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>View Results</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>Update Results</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- Inside the student-information div -->
-        <div class="button-container">
-            <button class="edit-button">Update</button>
-        </div>
+        <form method="POST">
+            <input type="text" name="instructor_id" hidden value="<?php echo $instructorData['instructor_id']; ?>" />
+            <div class="responsivetable">
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Permissions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        while ($row = mysqli_fetch_assoc($allPermissions)) {
+                            ?>
+                            <tr>
+                                <td>
+                                    <?php echo $row['permission_action']; ?>
+                                </td>
+                                <td>
+                                    <input type="checkbox" name="<?php echo $row['permission_action'] ?>"
+                                        value="<?php echo $row['permission_id'] ?>" <?php if (in_array($row['permission_id'], $checkedArray))
+                                               echo "checked"; ?>>
+                                </td>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
 
+                    </tbody>
+                </table>
+            </div>
+            <div class="button-container">
+                <button class="edit-button" name="update_instrcutor">Update</button>
+            </div>
+        </form>
     </div>
     <!-- Footer -->
 

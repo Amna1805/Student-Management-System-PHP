@@ -1,3 +1,33 @@
+<?php
+include_once('functions.php');
+if (isset($_GET['program_co_id'])) {
+    $programCo = getProgramCo($_GET['program_co_id']);
+    $programCoData = mysqli_fetch_assoc($programCo);
+    $programCoPermissions = getProgramCoPermission($_GET['program_co_id']);
+    $allPermissions = getSpecificPermission(2);
+    $checkedArray[] = "0";
+    if ($programCoPermissions) {
+        while ($row = mysqli_fetch_assoc($programCoPermissions)) {
+            $checkedArray[] = $row['permission_id'];
+        }
+    }
+} else {
+
+    header('location:adminProgramcopage.php');
+}
+
+if (isset($_POST['update_program_co'])) {
+    if (updateProgramCoPermissions()) {
+        echo '<script>alert("Program Co Added Succesfully!")</script>';
+        header('Location: programcopermissions.php?program_co_id=' . $_POST['program_co_id']);
+    } else {
+        echo '<script>alert("Failed!")</script>';
+        header('Location: programcopermissions.php?program_co_id=' . $_POST['program_co_id']);
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -53,61 +83,52 @@
 
     <div class="officer-section">
         <h2>Program Coordinator</h2>
-        <p>Employee ID: 123456</p>
-        <p>Name: John Doe</p>
-        <p>Designation:Program Coordinator Lead</p>
+        <p>Employee ID:
+            <?php echo $programCoData['employee_id'] ?>
+        </p>
+        <p>Name:
+            <?php echo $programCoData['program_co_name'] ?>
+        </p>
     </div>
     <!---PERMISSIONS-->
     <h1 class="heading">PERMISSIONS</h1>
     <div class="student-information">
-        <div class="responsivetable">
-            <table class="student-table">
-                <thead>
-                    <tr>
-                        <th>Action</th>
-                        <th>Permissions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>View Program Objectives</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>Add/Update/Delete Program Objectives</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>View Courses</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>Add/Update/Delete Courses</td>
-                        <td><input type="checkbox"></td>
-                    </tr>
-                    <tr>
-                        <td>View Course Content</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>Add/Update/Delete Course Content</td>
-                        <td><input type="checkbox"></td>
-                    </tr>
-                    <tr>
-                        <td>View Student Performamnce</td>
-                        <td><input type="checkbox" checked></td>
-                    </tr>
-                    <tr>
-                        <td>Add/Update/Delete Student Performamnce</td>
-                        <td><input type="checkbox"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <!-- Inside the student-information div -->
-        <div class="button-container">
-            <button class="edit-button">Update</button>
-        </div>
+        <form method="POST">
+            <input type="text" name="program_co_id" hidden value="<?php echo $programCoData['program_co_id']; ?>" />
+            <div class="responsivetable">
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Permissions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        while ($row = mysqli_fetch_assoc($allPermissions)) {
+                            ?>
+                            <tr>
+                                <td>
+                                    <?php echo $row['permission_action']; ?>
+                                </td>
+                                <td>
+                                    <input type="checkbox" name="<?php echo $row['permission_action'] ?>"
+                                        value="<?php echo $row['permission_id'] ?>" <?php if (in_array($row['permission_id'], $checkedArray))
+                                              echo "checked"; ?>>
+                                </td>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="button-container">
+                <button class="edit-button" name="update_program_co">Update</button>
+            </div>
+        </form>
 
     </div>
 

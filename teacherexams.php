@@ -1,3 +1,14 @@
+<?php
+// Start or resume session
+include_once('functions.php');
+// Check if the user is logged in
+if (!isset($_SESSION['instructor'])) {
+    // If not logged in, redirect to login page
+    header("Location: instructorlogin.php");
+    exit();
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,6 +26,15 @@
 </head>
 
 <body>
+<?php
+ if (isset($_SESSION['instructor'])) {
+     // Access the student's information
+     $instructor = $_SESSION['instructor'];
+     $teacher_id=$instructor['instructor_id'];
+    
+ 
+ } 
+ ?>
     <header id="schoolify-header">
         <nav>
             <input type="checkbox" id="check" style="color: transparent">
@@ -64,7 +84,9 @@
     <a href="createexam.php" class="create-course-button">Create New Exam</a>
 
     <!---EXAMS-->
-
+    <?php
+    $exams = get_teacher_exams($teacher_id);
+?>
     <div class="exam-information">
         <h6>EXAMS INFORMATION</h6>
         <div class="responsivetable">
@@ -73,73 +95,47 @@
                     <tr>
                         <th>Exam Name</th>
                         <th>Description</th>
+                        <th>Course</th>
+                        <th>Exam Due date</th>
+                        <th>Exam Total Marks</th>
                         <th colspan="4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                <?php  foreach ($exams as $exam) {
+             
+             $exam_det = get_exam_details($exam); 
+              $course_det = get_course_details($exam_det['course_id']); ?>
                     <!-- Exam 1 -->
                     <tr>
-                        <td>Artificial Intelligence</td>
-                        <td>This exam covers advanced AI concepts and applications.</td>
+                        <td><?php echo $exam_det['exam_title'] ?></td>
+                        <td><?php echo $exam_det['exam_desc'] ?></td>
+                        <td><?php echo $course_det['course_title'] ?></td>
+                        <td><?php echo $exam_det['exam_due_date'] ?></td>
+                        <td><?php echo $exam_det['exam_total_marks'] ?></td>
                         <td>
-                            <a href="viewexam.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updateexam.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-                        <td>
-                            <a href="#" class="action-button post">Post</a>
-                        </td>
+                    <form action="viewexam.php" method="POST">
+                    <input type="hidden" name="exam_id" value="<?php echo  $exam_det['exam_id']; ?>">
+                    <button type="submit" class="action-button view">View</button>
+                    </form>
+                    </td>
+                    <td>
+                    <form action="updateexam.php" method="POST">
+                    <input type="hidden" name="exam_id" value="<?php echo  $exam_det['exam_id']; ?>">
+                    <button type="submit" class="action-button update">Update</button>
+                    </form>
+                    </td>
+                    <td>
+                    <form action="deletcourse.php" method="POST">
+                    <input type="hidden" name="exam_id" value="<?php echo  $exam_det['exam_id']; ?>">
+                    <button type="submit" class="action-button delete">Delete</button>
+                    </form>
+                    </td>
                     </tr>
-                    <tr>
-                        <td>Cloud Computing</td>
-                        <td>This exam assesses your knowledge of cloud platforms and services.</td>
-                        <td>
-                            <a href="viewexam.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updateexam.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-                        <td>
-                            <a href="#" class="action-button post">Post</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Machine Learning</td>
-                        <td>This exam assesses your knowledge of Machine platforms and services.</td>
-                        <td>
-                            <a href="viewexam.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updateexam.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-                        <td style="color: rgb(5, 33, 49);">Posted</td>
-                    </tr>
-                    <tr>
-                        <td>Data Science</td>
-                        <td>This exam assesses your knowledge of Data Science Concepts.</td>
-                        <td>
-                            <a href="viewexam.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updateexam.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-                        <td style="color: rgb(5, 33, 49);">Posted</td>
-                    </tr>
+                   
                     <!-- Add more exam rows as needed -->
                 </tbody>
+                <?php } ?>
             </table>
         </div>
 

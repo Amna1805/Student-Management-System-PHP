@@ -1,3 +1,15 @@
+<?php
+include_once('functions.php');
+$students = getStudents();
+if (isset($_POST['delete_student'])) {
+    if (deleteStudent()) {
+        echo '<script>alert("Stundet Deleted Succesfully!")</script>';
+        header('location:adminstudentpage.php');
+    } else {
+        echo '<script>alert("Failed!")</script>';
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,7 +23,17 @@
     <link rel="stylesheet" href="css/footer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Jacques+Francois&display=swap" rel="stylesheet">
-    <title>Monitor Students</title>
+    <title>All Students</title>
+    <script>
+        function completeDeletion() {
+            const response = confirm('Are you sure you want to delete this student?')
+            if (response) {
+                return true
+            } else {
+                return false
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -65,221 +87,61 @@
     <div class="role-information">
         <h6>STUDENTS </h6>
         <p><strong>Batch: </strong>2021-2023</p>
-        <div class="responsivetable">
-            <table class="role-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Registration Number</th>
-                        <th colspan="4">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Student 1 -->
-                    <tr>
-                        <td>Student 1</td>
-                        <td>146832501</td>
-                        <td>
-                            <a href="viewstudent.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updatestudent.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-                        <td>
-                            <a href="studentactivities.php" class="action-button monitor">Monitor</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Student 1</td>
-                        <td>146832501</td>
-                        <td>
-                            <a href="viewstudent.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updatestudent.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-                        <td>
-                            <a href="studentactivities.php" class="action-button monitor">Monitor</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Student 1</td>
-                        <td>146832501</td>
-                        <td>
-                            <a href="viewstudent.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updatestudent.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-
-                        <td>
-                            <a href="studentactivities.php" class="action-button monitor">Monitor</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Student 1</td>
-                        <td>146832501</td>
-                        <td>
-                            <a href="viewstudent.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updatestudent.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-
-                        <td>
-                            <a href="studentactivities.php" class="action-button monitor">Monitor</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Student 1</td>
-                        <td>146832501</td>
-                        <td>
-                            <a href="viewstudent.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updatestudent.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-                        <td>
-                            <a href="studentactivities.php" class="action-button monitor">Monitor</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Student 1</td>
-                        <td>146832501</td>
-                        <td>
-                            <a href="viewstudent.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updatestudent.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-                        <td>
-                            <a href="studentactivities.php" class="action-button monitor">Monitor</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Student 1</td>
-                        <td>146832501</td>
-                        <td>
-                            <a href="viewstudent.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updatestudent.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-
-                        <td>
-                            <a href="studentactivities.php" class="action-button monitor">Monitor</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Student 1</td>
-                        <td>146832501</td>
-                        <td>
-                            <a href="viewstudent.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updatestudent.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-
-                        <td>
-                            <a href="studentactivities.php" class="action-button monitor">Monitor</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Student 1</td>
-                        <td>146832501</td>
-                        <td>
-                            <a href="viewstudent.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updatestudent.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-
-                        <td>
-                            <a href="studentactivities.php" class="action-button monitor">Monitor</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Student 1</td>
-                        <td>146832501</td>
-                        <td>
-                            <a href="viewstudent.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updatestudent.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-
-                        <td>
-                            <a href="studentactivities.php" class="action-button monitor">Monitor</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Student 1</td>
-                        <td>146832501</td>
-                        <td>
-                            <a href="viewstudent.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updatestudent.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-
-                        <td>
-                            <a href="studentactivities.php" class="action-button monitor">Monitor</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Student 1</td>
-                        <td>146832501</td>
-                        <td>
-                            <a href="viewstudent.php" class="action-button view">View</a>
-                        </td>
-                        <td>
-                            <a href="updatestudent.php" class="action-button update">Update</a>
-                        </td>
-                        <td>
-                            <a href="deleteexam.php" class="action-button delete">Delete</a>
-                        </td>
-
-                        <td>
-                            <a href="studentactivities.php" class="action-button monitor">Monitor</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
+        <?php
+        if ($students == false) {
+            ?>
+            <h6>No students data found.</h6>
+            <?php
+        } else {
+            ?>
+            <div class="responsivetable">
+                <table class="role-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Registration Number</th>
+                            <th colspan="4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        while ($row = mysqli_fetch_assoc($students)) {
+                            $std_id = $row['std_id'];
+                            $std_name = $row['std_name'];
+                            $std_reg_no = $row['std_reg_no'];
+                            ?>
+                            <tr>
+                                <td>
+                                    <?php echo $std_name ?>
+                                </td>
+                                <td>
+                                    <?php echo $std_reg_no ?>
+                                </td>
+                                <td>
+                                    <a href="viewstudent.php?std_id=<?php echo $std_id; ?>" class="action-button view">View</a>
+                                </td>
+                                <td>
+                                    <a href="updatestudent.php?std_id=<?php echo $std_id; ?>" class="action-button update">Update</a>
+                                </td>
+                                <td>
+                                    <form method="POST" onsubmit="return completeDeletion()">
+                                        <input type="text" name="std_id" hidden value="<?php echo $std_id; ?>" />
+                                        <button type="submit" class="action-button delete" name="delete_student">Delete</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <a href="studentactivities.php" class="action-button monitor">Monitor</a>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php
+        }
+        ?>
     </div>
     <a class="myBtn" href="adminchat.php">
         <span class="icon"></span>

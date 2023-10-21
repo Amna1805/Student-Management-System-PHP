@@ -1,6 +1,6 @@
 <?php
 // Start or resume session
-session_start();
+include_once('functions.php');
 
 // Check if the user is logged in
 if (!isset($_SESSION['student'])) {
@@ -32,7 +32,7 @@ include_once('studentheader.php');
 <body>
 <?php
  if (isset($_SESSION['student'])) {
-    include_once('functions.php');
+
      // Access the student's information
      $student = $_SESSION['student'];
      $admission_year=$student['std_admission_year'];
@@ -79,7 +79,7 @@ for ($semester = $currentSemester; $semester >= 1; $semester--) {
             $course_det = get_course_details($course); ?>
             <!--Course 1-->
             <a href="studentcoursepage.html" class="card">
-            <img src="<?php echo isset($student['std_image']) ? 'data:image/jpeg;base64,' . base64_encode($course_det['course_image']) : 'path_to_placeholder_image.jpg'; ?>" alt="Not found">
+            <img src="<?php echo displayImage($course_det['course_image']); ?>" alt="Not found">
                 <h3><?php echo $course_det['course_title'] ?></h3>
                 <p><?php echo $course_det['course_desc'] ?></p>
             </a>

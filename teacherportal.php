@@ -1,7 +1,6 @@
 <?php
 // Start or resume session
-session_start();
-
+include_once('functions.php');
 // Check if the user is logged in
 if (!isset($_SESSION['instructor'])) {
     // If not logged in, redirect to login page
@@ -33,6 +32,7 @@ if (!isset($_SESSION['instructor'])) {
  if (isset($_SESSION['instructor'])) {
      // Access the student's information
      $instructor = $_SESSION['instructor'];
+     $teacher_id=$instructor['instructor_id'];
  
  } 
  ?>
@@ -104,36 +104,26 @@ if (!isset($_SESSION['instructor'])) {
 
 
     <div class="courses">
-        <h6>MY COURSES</h6>
-        <div class="cards">
+    <?php
+
+// Loop through semesters from the current semester to the first semester
+    // Get courses for the current semester
+    $courses = get_teacher_courses($teacher_id);
+?>
+    <h6>MY COURSES</h6>
+    <div class="cards">
+
+        <?php  foreach ($courses as $course) {
+            $course_det = get_course_details($course); ?>
             <!--Course 1-->
-            <a href="teachercoursepage.php"  class="card">
-                <img src="images/Ai_ML.jpg" alt="Ai and ML">
-                <h3>Artificial Intelligence and Machine Learning</h3>
-                <p>Unlock the power of AI and ML. Dive into the world of intelligent algorithms, data-driven insights,
-                    and autonomous systems. Navigate through advanced concepts, from deep learning to reinforcement
-                    learning, and pave the way for a smarter future, where machines learn and adapt alongside you.</p>
-                </a>
-            <!-- Course 2-->
-            <a href="teachercoursepage.php"  class="card">
-                <img src="images/cyber_security.jpg" alt="Cyber Security">
-                <h3>Advanced Security</h3>
-                <p>Cybersecurity at its peak. Unleash advanced defense techniques, conquer cyber threats, and shield
-                    critical assets. Master cutting-edge strategies to safeguard against modern attacks. Explore the
-                    intricacies of ethical hacking and stay one step ahead in the digital battlefield, ensuring a secure
-                    digital future.</p>
-                </a>
-            <!-- Course 3-->
-            <a href="teachercoursepage.php"  class="card">
-                <img src="images/database.png" alt="Database">
-                <h3>Database Implementation</h3>
-                <p>Database Implementation Mastery. Delve into the core of data management, database design, and
-                    implementation. Explore advanced topics in database systems, SQL optimization, and scalability.
-                    Elevate your expertise in crafting efficient, high-performance databases that drive modern
-                    applications and empower businesses.</p>
-                </a>
+            <a href="studentcoursepage.html" class="card">
+            <img src="<?php echo displayImage($course_det['course_image']); ?>" alt="Not found">
+                <h3><?php echo $course_det['course_title'] ?></h3>
+                <p><?php echo $course_det['course_desc'] ?></p>
+            </a>
+        <?php }?>
         </div>
-    </div>
+        </div>
     <a class="myBtn" href="teacherchat.php">
         <span class="icon"></span>
         Chat

@@ -3,9 +3,9 @@
 session_start();
 
 // Check if the user is logged in
-if (!isset($_SESSION['instructor'])) {
+if (!isset($_SESSION['admin'])) {
     // If not logged in, redirect to login page
-    header("Location: instructorlogin.php");
+    header("Location: adminlogin.php");
     exit();
 }
 include_once('adminheader.php');

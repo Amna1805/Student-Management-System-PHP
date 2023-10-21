@@ -43,6 +43,9 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 10px;
+}
+button{
     font-size: 12px;
 }
 .action-button.view{

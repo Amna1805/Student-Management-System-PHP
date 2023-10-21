@@ -1,8 +1,7 @@
 <?php
 // Start or resume session
-session_start();
-
 // Check if the user is logged in
+include_once('functions.php');
 if (!isset($_SESSION['student'])) {
     // If not logged in, redirect to login page
     header("Location: studentlogin.php");
@@ -25,11 +24,27 @@ include_once('studentheader.php');
 </head>
 <body>
 
- <?php
+<?php
  if (isset($_SESSION['student'])) {
      // Access the student's information
      $student = $_SESSION['student'];
- 
+     $admission_year=$student['std_admission_year'];
+     $std_id=$student['std_id'];
+     function getCurrentSemester($admissionYear) {
+        // Assume a typical academic year with two semesters: Fall and Spring
+        // Replace this with your specific logic to determine the current semester
+        $currentYear = date('Y');
+        $currentMonth = date('n');
+    
+        if ($currentMonth >= 1 && $currentMonth <= 6) {
+            // Spring semester
+            return ($currentYear - $admissionYear) * 2 + 2;
+        } else {
+            // Fall semester
+            return ($currentYear - $admissionYear) * 2 + 1;
+        }
+    }
+    $currentSemester = getCurrentSemester($admission_year);
  } 
  ?>
  
@@ -60,38 +75,28 @@ include_once('studentheader.php');
         </a>
     </div>
 
-
     <div class="courses">
-        <h6>SEMESTER:FALL 2023(Current)</h6>
-        <div class="cards">
+    <?php
+
+// Loop through semesters from the current semester to the first semester
+    // Get courses for the current semester
+    $courses = get_student_courses($std_id, $currentSemester);
+    $semesterType = $currentSemester % 2 === 0 ? 'SPRING' : 'FALL';
+?>
+    <h6>SEMESTER  <?php echo $semesterType.' '.$admission_year.' '?>(Current <?php echo $currentSemester ?>)</h6>
+    <div class="cards">
+
+        <?php  foreach ($courses as $course) {
+            $course_det = get_course_details($course); ?>
             <!--Course 1-->
-            <a href="studentcoursepage.php"  class="card">
-                <img src="images/Ai_ML.jpg" alt="Ai and ML">
-                <h3>Artificial Intelligence and Machine Learning</h3>
-                <p>Unlock the power of AI and ML. Dive into the world of intelligent algorithms, data-driven insights,
-                    and autonomous systems. Navigate through advanced concepts, from deep learning to reinforcement
-                    learning, and pave the way for a smarter future, where machines learn and adapt alongside you.</p>
-                </a>
-            <!-- Course 2-->
-            <a href="studentcoursepage.php"  class="card">
-                <img src="images/cyber_security.jpg" alt="Cyber Security">
-                <h3>Advanced Security</h3>
-                <p>Cybersecurity at its peak. Unleash advanced defense techniques, conquer cyber threats, and shield
-                    critical assets. Master cutting-edge strategies to safeguard against modern attacks. Explore the
-                    intricacies of ethical hacking and stay one step ahead in the digital battlefield, ensuring a secure
-                    digital future.</p>
-                </a>
-            <!-- Course 3-->
-            <a href="studentcoursepage.php"  class="card">
-                <img src="images/database.png" alt="Database">
-                <h3>Database Implementation</h3>
-                <p>Database Implementation Mastery. Delve into the core of data management, database design, and
-                    implementation. Explore advanced topics in database systems, SQL optimization, and scalability.
-                    Elevate your expertise in crafting efficient, high-performance databases that drive modern
-                    applications and empower businesses.</p>
-                </a>
+            <a href="studentcoursepage.html" class="card">
+            <img src="<?php echo displayImage($course_det['course_image']); ?>" alt="Not found">
+                <h3><?php echo $course_det['course_title'] ?></h3>
+                <p><?php echo $course_det['course_desc'] ?></p>
+            </a>
+        <?php }?>
         </div>
-    </div>
+        </div>
     <a class="myBtn" href="studentchat.php">
         <span class="icon"></span>
         Chat
