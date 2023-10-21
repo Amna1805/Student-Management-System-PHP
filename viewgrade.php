@@ -1,3 +1,14 @@
+<?php
+// Start or resume session
+include_once('functions.php');
+// Check if the user is logged in
+if (!isset($_SESSION['instructor'])) {
+    // If not logged in, redirect to login page
+    header("Location: instructorlogin.php");
+    exit();
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,6 +25,23 @@
 </head>
 
 <body>
+<?php
+ if (isset($_SESSION['instructor'])) {
+     // Access the student's information
+     $instructor = $_SESSION['instructor'];
+     $teacher_id=$instructor['instructor_id'];
+     
+ 
+ } 
+ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['exam_id'])) {
+        $exam_id = $_POST['exam_id'];
+        $exam_det = get_exam_details($exam_id);
+    } else {
+        $exam_id =99;
+    }
+}
+?>
     <header id="schoolify-header">
         <nav>
             <input type="checkbox" id="check" style="color: transparent">
@@ -63,8 +91,10 @@
 
 
     <!---RESULTS-->
+    
     <div class="results">
-        <h6>EXAM: MACHINE LEARNING</h6> <!-- Change the course name as needed -->
+
+        <h6>EXAM:<?php echo $exam_det['exam_title'] ?></h6> <!-- Change the course name as needed -->
         <div class="responsivetable">
             <table class="resultstable">
                 <thead>
@@ -74,83 +104,56 @@
                         <th>Total Marks</th>
                         <th>Obtained Marks</th>
                         <th>Remarks</th>
-                        <th>Action</th>
                     </tr>
                 </thead>
+               
+            
                 <tbody>
-                    <!-- Student 1 -->
-                    <tr>
-                        <td>Student 1</td>
-                        <td>123456</td>
-                        <td>10</td>
-                        <td>5</td>
-                        <td>Need more hardwork</td>
-                        <td><a href="viewstudentgrade.php" class="view-button">View Details</a></td>
-                    </tr>
+    <!-- Student details -->
+    <?php
+    $student_exams = get_student_exams($exam_id);
+    $total_students = count($student_exams); // Total number of students
+    $passed_students = 0; // Counter for students who passed
+    $total_marks = 0; // Total marks obtained by all students
 
-                    <!-- Student 2 -->
-                    <tr>
-                        <td>Student 2</td>
-                        <td>654321</td>
-                        <td>10</td>
-                        <td>8</td>
-                        <td>Good</td>
-                        <td><a href="viewstudentgrade.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Student 3</td>
-                        <td>654321</td>
-                        <td>10</td>
-                        <td>9</td>
-                        <td>Excellent</td>
-                        <td><a href="viewstudentgrade.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Student 4</td>
-                        <td>654321</td>
-                        <td>10</td>
-                        <td>6</td>
-                        <td>More hardwork</td>
-                        <td><a href="viewstudentgrade.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Student 5</td>
-                        <td>654321</td>
-                        <td>10</td>
-                        <td>8</td>
-                        <td>Well done</td>
-                        <td><a href="viewstudentgrade.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Student 6</td>
-                        <td>654321</td>
-                        <td>10</td>
-                        <td>7</td>
-                        <td>Good</td>
-                        <td><a href="viewstudentgrade.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Student 7</td>
-                        <td>654321</td>
-                        <td>10</td>
-                        <td>5</td>
-                        <td>Need Improvment</td>
-                        <td><a href="viewstudentgrade.php" class="view-button">View Details</a></td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><strong>Total Students</strong></td>
-                        <td colspan="1">35</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><strong>Passed Students</strong></td>
-                        <td colspan="1">30</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5"><strong>Average Pecentage</strong></td>
-                        <td colspan="1">80%</td>
-                    </tr>
-                    <!-- Add more students and their details as needed -->
-                </tbody>
+    foreach ($student_exams as $student_exam) {
+        $student_det = get_student_details($student_exam['std_id']);
+        $marks_obtained = $student_exam['marks_obtained'];
+        $total_marks += $marks_obtained;
+
+        // Check if the student passed (marks obtained > 7)
+        if ($marks_obtained > 7) {
+            $passed_students++;
+        }
+        ?>
+        <tr>
+            <td><?php echo $student_det['std_name']; ?></td>
+            <td><?php echo $student_det['std_reg_no']; ?></td>
+            <td><?php echo $exam_det['exam_total_marks']; ?></td>
+            <td><?php echo $marks_obtained; ?></td>
+            <td><?php echo $student_exam['remarks']; ?></td>
+        </tr>
+    <?php } ?>
+
+    <!-- Total Students -->
+    <tr>
+        <td colspan="4"><strong>Total Students</strong></td>
+        <td colspan="1"><?php echo $total_students; ?></td>
+    </tr>
+
+    <!-- Passed Students -->
+    <tr>
+        <td colspan="4"><strong>Passed Students</strong></td>
+        <td colspan="1"><?php echo $passed_students; ?></td>
+    </tr>
+
+    <!-- Average Percentage -->
+    <tr>
+        <td colspan="4"><strong>Average Percentage</strong></td>
+        <td colspan="1"><?php echo ($total_marks / $total_students) . '%'; ?></td>
+    </tr>
+</tbody>
+
             </table>
         </div>
     </div>

@@ -1,5 +1,23 @@
-<?php 
-include_once('studentheader.php'); ?>
+<?php
+// Start or resume session
+include_once('functions.php');
+
+// Check if the user is logged in
+if (!isset($_SESSION['student'])) {
+    // If not logged in, redirect to login page
+    header("Location: studentlogin.php");
+    exit();
+}
+if (isset($_POST['take_exam'])) {
+    if (takeExam()) {
+        echo '<script>alert("Exam take Successfully!")</script>';
+        header("Location: studentexams.php");
+    } else {
+        echo '<script>alert("Failed!")</script>';
+    }
+} 
+include_once('studentheader.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,6 +26,7 @@ include_once('studentheader.php'); ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="css/portalheader.css">
     <link rel="stylesheet" type="text/css" href="css/takeexam.css">
+    <link rel="stylesheet" type="text/css" href="css/createexam.css">
     <link rel="stylesheet" href="css/footer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Jacques+Francois&display=swap" rel="stylesheet">
@@ -15,111 +34,80 @@ include_once('studentheader.php'); ?>
 </head>
 
 <body>
-  
+<?php
+ if (isset($_SESSION['student'])) {
+
+     // Access the student's information
+     $student = $_SESSION['student'];
+     $admission_year=$student['std_admission_year'];
+     $std_id=$student['std_id'];
+ }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['exam_id'])) {
+        $exam_id = $_POST['exam_id'];
+        $exam_det = get_exam_details($exam_id);
+        $exam_question=get_question_details($exam_id);
+        // Fetch and display course details based on $course_id
+        // ...
+        // Your code to fetch and display course details goes here
+        // ...
+    } else {
+        $exam_id =99;
+    }
+}
+
+ ?>   
+<form method="POST" >
 <!---EXAM INFORMATION-->
 <section class="exam-info-section">
     <div class="exam-info">
         <div class="exam-info-heading">
-            <h2>Machine Learning Exam</h2>
+        <h2><?php echo $exam_det['exam_title']?></h2>
         </div>
         <div class="time-remaining">
-            <span>Time Remaining: </span>
-            <span class="red-text">00:45:00</span>
+            <span>Time Alloted: </span>
+            <span class="red-text"><?php echo $exam_det['time_alloted']?>mins</span>
         </div>
     </div>
     
 
     <div class="exam-mcqs">
-          <!-- MCQ 1 -->
-          <div class="mcq">
-            <p>1. What is supervised learning?</p>
-            <input type="radio" name="mcq1" id="mcq1_opt1">
-            <label for="mcq1_opt1">A learning where the model learns from labeled data.</label><br>
-            <input type="radio" name="mcq1" id="mcq1_opt2">
-            <label for="mcq1_opt2">A learning where the model learns without any supervision.</label><br>
-        </div>
-
-        <!-- MCQ 2 -->
-        <div class="mcq">
-            <p>2. Which algorithm is a type of unsupervised learning?</p>
-            <input type="radio" name="mcq2" id="mcq2_opt1">
-            <label for="mcq2_opt1">K-means clustering</label><br>
-            <input type="radio" name="mcq2" id="mcq2_opt2">
-            <label for="mcq2_opt2">Linear regression</label><br>
-        </div>
-
-        <!-- MCQ 3 -->
-        <div class="mcq">
-            <p>3. In reinforcement learning, what does the agent learn from?</p>
-            <input type="radio" name="mcq3" id="mcq3_opt1">
-            <label for="mcq3_opt1">Rewards or penalties based on its actions</label><br>
-            <input type="radio" name="mcq3" id="mcq3_opt2">
-            <label for="mcq3_opt2">Labeled data</label><br>
-        </div>
-
-        <!-- MCQ 4 -->
-        <div class="mcq">
-            <p>4. Which activation function is often used in the output layer for binary classification?</p>
-            <input type="radio" name="mcq4" id="mcq4_opt1">
-            <label for="mcq4_opt1">Sigmoid</label><br>
-            <input type="radio" name="mcq4" id="mcq4_opt2">
-            <label for="mcq4_opt2">ReLU</label><br>
-        </div>
-
-        <!-- MCQ 5 -->
-        <div class="mcq">
-            <p>5. What does SVM stand for?</p>
-            <input type="radio" name="mcq5" id="mcq5_opt1">
-            <label for="mcq5_opt1">Support Vector Machine</label><br>
-            <input type="radio" name="mcq5" id="mcq5_opt2">
-            <label for="mcq5_opt2">Simple Vector Machine</label><br>
-        </div>
-
-        <!-- MCQ 6 -->
-        <div class="mcq">
-            <p>6. What is the goal of clustering algorithms?</p>
-            <input type="radio" name="mcq6" id="mcq6_opt1">
-            <label for="mcq6_opt1">To group similar data points together</label><br>
-            <input type="radio" name="mcq6" id="mcq6_opt2">
-            <label for="mcq6_opt2">To classify data points into predefined classes</label><br>
-        </div>
-
-        <!-- MCQ 7 -->
-        <div class="mcq">
-            <p>7. Which metric is often used to evaluate a classification model?</p>
-            <input type="radio" name="mcq7" id="mcq7_opt1">
-            <label for="mcq7_opt1">Accuracy</label><br>
-            <input type="radio" name="mcq7" id="mcq7_opt2">
-            <label for="mcq7_opt2">Mean Squared Error</label><br>
-        </div>
-
-        <!-- MCQ 8 -->
-        <div class="mcq">
-            <p>8. What is the purpose of dropout in neural networks?</p>
-            <input type="radio" name="mcq8" id="mcq8_opt1">
-            <label for="mcq8_opt1">To reduce overfitting</label><br>
-            <input type="radio" name="mcq8" id="mcq8_opt2">
-            <label for="mcq8_opt2">To increase the model's capacity</label><br>
-        </div>
-         <!-- MCQ 9 -->
-         <div class="mcq">
-            <p>9. Which technique is used to handle imbalanced datasets in classification problems?</p>
-            <input type="radio" name="mcq9" id="mcq9_opt1">
-            <label for="mcq9_opt1">Over-sampling and under-sampling</label><br>
-            <input type="radio" name="mcq9" id="mcq9_opt2">
-            <label for="mcq9_opt2">Weighted classes</label><br>
-        </div>
-
-        <!-- MCQ 10 -->
-        <div class="mcq">
-            <p>10.What is the purpose of a validation set in model training?</p>
-            <input type="radio" name="mcq10" id="mcq10_opt1">
-            <label for="mcq10_opt1">To tune hyperparameters and avoid overfitting</label><br>
-            <input type="radio" name="mcq10" id="mcq10_opt2">
-            <label for="mcq10_opt2">To train the model from scratch</label><br>
-        </div>
+    <form method="POST">
+        <?php
+        $questionCounter = 1;
+        foreach ($exam_question as $question) {
+            ?>
+            <div class="mcq">
+                <div class="questionsdiv">
+                    <p><?php echo $questionCounter; ?>.</p>
+                    <input class="question" type="text" placeholder="Question <?php echo $questionCounter; ?>" name="question[]" id="question<?php echo $questionCounter; ?>" value="<?php echo htmlspecialchars($question['question']); ?>" readonly>
+                </div>
+        
+                <div class="optionsdiv">
+                    <label for="mcq<?php echo $questionCounter; ?>_option1">
+                        <input type="radio" name="selected_option[<?php echo $questionCounter; ?>]" value="<?php echo $question['option_1']; ?>" id="mcq<?php echo $questionCounter; ?>_option1" required>
+                        <input type="text" class="option" placeholder="Option 1" name="option1[]" value="<?php echo $question['option_1']; ?>" readonly>
+                    </label>
+                </div>
+        
+                <div class="optionsdiv">
+                    <label for="mcq<?php echo $questionCounter; ?>_option2">
+                        <input type="radio" name="selected_option[<?php echo $questionCounter; ?>]" value="<?php echo $question['option_2']; ?>"  id="mcq<?php echo $questionCounter; ?>_option2" required>
+                        <input type="text" class="option" placeholder="Option 2" name="option2[]" value="<?php echo $question['option_2']; ?>" readonly>
+                    </label>
+                </div>
+                <input type="hidden" name="questionnaire[]" value="<?php echo $question['quest_id']; ?>">
+            </div>
+            <?php
+            $questionCounter++;
+        }        
+        ?>
+</div>
+<input type="hidden" name="std_id" value="<?php echo $std_id; ?>">
+<input type="hidden" name="exam_id" value="<?php echo $exam_id; ?>">
         <div class="submit-button">
-            <button type="submit">Submit</button>
+            <button type="submit" name="take_exam">Submit</button>
         </div>
         
     </div>
@@ -127,7 +115,7 @@ include_once('studentheader.php'); ?>
 </section>
 
 
-
+</form>
    
 </body>
 

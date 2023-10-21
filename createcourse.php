@@ -179,7 +179,7 @@ if (isset($_POST['create_course'])) {
         <section></section>
     </header>
     <!--CREATE COURSES-->
-    <form  method="POST" onsubmit="return validateForm();" >
+    <form  method="POST" onsubmit="return validateForm();" enctype="multipart/form-data">
     <div class="create-course-form">
         <h2>Create Course</h2>
      

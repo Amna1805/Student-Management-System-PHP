@@ -1,6 +1,16 @@
-<?php 
-include_once('studentheader.php'); ?>
+<?php
+// Start or resume session
+include_once('functions.php');
 
+// Check if the user is logged in
+if (!isset($_SESSION['student'])) {
+    // If not logged in, redirect to login page
+    header("Location: studentlogin.php");
+    exit();
+}
+
+include_once('studentheader.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +25,31 @@ include_once('studentheader.php'); ?>
 </head>
 <body>
 
-      
+<?php
+ if (isset($_SESSION['student'])) {
+
+     // Access the student's information
+     $student = $_SESSION['student'];
+     $admission_year=$student['std_admission_year'];
+     $std_id=$student['std_id'];
+     function getCurrentSemester($admissionYear) {
+        // Assume a typical academic year with two semesters: Fall and Spring
+        // Replace this with your specific logic to determine the current semester
+        $currentYear = date('Y');
+        $currentMonth = date('n');
+    
+        if ($currentMonth >= 1 && $currentMonth <= 6) {
+            // Spring semester
+            return ($currentYear - $admissionYear) * 2 + 2;
+        } else {
+            // Fall semester
+            return ($currentYear - $admissionYear) * 2 + 1;
+        }
+    }
+    $currentSemester = getCurrentSemester($admission_year);
+ } 
+ $courses = get_student_courses($std_id, $currentSemester);
+ ?>   
 
 <div class="image-with-text">
         <div class="overlay"></div>
@@ -35,54 +69,63 @@ include_once('studentheader.php'); ?>
                 <thead>
                     <tr>
                         <th>Exam Name</th>
+                        <th>Exam Course</th>
                         <th>Description</th>
                         <th>Status</th>
                         <th>Due Date</th>
-                        <th>Time Passed</th>
                         <th>Marks</th>
                         <th>Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Exam 1 -->
-                    <tr>
-                        <td>Artificial Intelligence</td>
-                        <td>This exam covers advanced AI concepts and applications.</td>
-                        <td><a href="takeexam.php" class="status-button due">Take Exam</a></td>
-                        <td>2023-11-05</td>
-                        <td>N/A</td>
-                        <td>N/A</td>
-                        <td>N/A</td>
-                    </tr>
-                    <tr>
-                        <td>Cloud Computing</td>
-                        <td>This exam assesses your knowledge of cloud platforms and services.</td>
-                        <td><button class="status-button completed">Completed</button></td>
-                        <td>2023-10-10</td>
-                        <td>2 days ago</td>
-                        <td>7 out of 10</td>
-                        <td>Great work!</td>
-                    </tr>
-                    <tr>
-                        <td>Machine Learning</td>
-                        <td>This exam assesses your knowledge of Machine platforms and services.</td>
-                        <td><button class="status-button completed">Completed</button></td>
-                        <td>2023-10-10</td>
-                        <td>2 days ago</td>
-                        <td>7 out of 10</td>
-                        <td>Great work!</td>
-                    </tr>
-                     <tr>
-                        <td>Data Science</td>
-                        <td>This exam assesses your knowledge of Data Science Concepts.</td>
-                        <td><button class="status-button expire">Expired</button></td>
-                        <td>2023-11-05</td>
-                        <td>0 out of 10</td>
-                        <td>5 days ago</td>
-                        <td>N/A</td>
-                    </tr>
-    
+                <?php
+foreach ($courses as $course) { 
+    $course_exams = get_course_exam($course);
+    if ($course_exams) {
+        $course_det = get_course_details($course); 
+        $exam_det = get_exam_details($course_exams['exam_id']); 
+        $student_exam_details = get_studentexam_details($exam_det['exam_id'], $std_id);
+        $current_date = date('Y-m-d');
+        ?>
+        <!-- Exam 1 -->
+        <tr>
+            <td><?php echo $exam_det['exam_title']; ?></td>
+            <td><?php echo $exam_det['exam_desc']; ?></td>
+            <td><?php echo $course_det['course_title']; ?></td>
+            <?php if ($student_exam_details) { ?>
+                <td><p class="status-button completed">Completed</p></td>
+                <td><?php echo $exam_det['exam_due_date']; ?></td>
+                <?php if ($student_exam_details['is_graded'] == 0) { ?>
+                    <td>Not graded yet</td>
+                    <td>Not graded yet</td>
+                <?php } else { ?>
+                    <td><?php echo $student_exam_details['marks_obtained']; ?></td>
+                    <td><?php echo $student_exam_details['remarks']; ?></td>
+                <?php } ?>
+            <?php } else {
+                if ($current_date > $exam_det['exam_due_date']) { ?>
+                    <td><p class="status-button expire">Expired</p></td>
+                    <td><?php echo $exam_det['exam_due_date']; ?></td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                <?php } else { ?>
+                    <form action="takeexam.php" method="POST">
+                        <input type="hidden" name="exam_id" value="<?php echo $exam_det['exam_id']; ?>">
+                        <td><button type="submit" class="status-button due">Take Exam</button></td>
+                    </form>
+                    <td><?php echo $exam_det['exam_due_date']; ?></td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                <?php } ?>
+            <?php } ?>
+        </tr>
+    <?php } 
+}
+?>
+                        
                     <!-- Add more exam rows as needed -->
+                    </tr>
+                   
                 </tbody>
             </table>
         </div>

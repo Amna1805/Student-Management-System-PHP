@@ -1,6 +1,16 @@
 <?php
 include_once('config.php');
 session_start();
+function displayImage($imageData) {
+    if (isset($imageData) && !empty($imageData)) {
+        // If image data is available, display the image
+        return 'data:image/jpeg;base64,' . base64_encode($imageData);
+    } else {
+        // If no image data, return an empty string
+        return '';
+    }
+}
+
 function createCourse()
 {
 
@@ -152,43 +162,103 @@ function updateCourse()
         return false; // Validation failed
     }
 }
+
+function takeExam() {
+    // Assuming you have a database connection
+    $db = $GLOBALS['db'];
+ // Get the current date and time
+ $currentDate = date('Y-m-d H:i:s');
+    $selectedOptions = $_POST['selected_option'];
+    $question_ids = $_POST['questionnaire']; // An array of question IDs
+    $std_id = mysqli_real_escape_string($db, $_POST['std_id']);
+    $exam_id = mysqli_real_escape_string($db, $_POST['exam_id']);
+
+    // Check if the arrays have the same number of elements (questions and question IDs)
+    if (count($selectedOptions) !== count($question_ids)) {
+        return false; // Error: Arrays don't match
+    }
+
+    // Loop through the selected options and question IDs
+    for ($i = 0; $i < count($selectedOptions); $i++) {
+        $question_id = mysqli_real_escape_string($db, $question_ids[$i]);
+        $selectedOption = mysqli_real_escape_string($db, $selectedOptions[$i+1]);
+
+        // Insert the selected option into the database table for each question
+        $insertQuery = "INSERT INTO student_exam_submitted (std_id, quest_id, submitted_answer) 
+        VALUES ('$std_id', '$question_id', '$selectedOption')";
+
+if (mysqli_query($db, $insertQuery)) {
+   // Insert a record into the student_exam table to indicate that the student has taken the exam
+$studentExamQuery = "INSERT INTO student_exam (exam_id, std_id,submitted_date) 
+VALUES ('$exam_id', '$std_id' ,'$currentDate')";
+if (mysqli_query($db, $studentExamQuery)) {
+    return true;
+}
+else {
+    return false;
+}
+}
+
+}
+
+return false;
+}
+
+
+function deleteExam()
+{
+    $db = $GLOBALS['db'];
+
+    // Check if exam_id is provided
+    if (isset($_POST['exam_id'])) {
+        $exam_id = mysqli_real_escape_string($db, $_POST['exam_id']);
+
+        // Update the exam's is_deleted flag
+        $update_exam = "UPDATE exams SET is_deleted = 1 WHERE exam_id = $exam_id";
+        if (mysqli_query($db, $update_exam)) {
+            return true; // Exam is marked as deleted
+        } else {
+            return false; // Exam deletion failed
+        }
+    }
+
+    return false; // Exam ID not provided
+}
+
+
+
 function createExam()
 {
     $db = $GLOBALS['db'];
 
     // Extract and sanitize data from the form
     $exam_title = mysqli_real_escape_string($db, $_POST['exam_title']);
-    $time_allot = mysqli_real_escape_string($db, $_POST['time_allot']);
-    $exam_id = mysqli_real_escape_string($db, $_POST['exam_id']); // Replace with your method of obtaining the exam_id
-
-    // Validate input data
-    if (empty($exam_title)) {
-        echo "Please enter an exam title.";
-        return false;
-    }
-
-    if (empty($time_allot)) {
-        echo "Please enter the time allotted for the exam.";
-        return false;
-    }
-
+    $exam_desc= mysqli_real_escape_string($db, $_POST['exam_desc']);
+    $due_date = mysqli_real_escape_string($db, $_POST['due_date']);
+    $time_allot = mysqli_real_escape_string($db, $_POST['time_alloted']);
+    $course = mysqli_real_escape_string($db, $_POST['course_id']); // Replace with your method of obtaining the exam_id
+    $teacher = mysqli_real_escape_string($db, $_POST['teacher_id']);
     // Update the exam details in the 'exams' table
-    $query = "UPDATE exams SET exam_title = '$exam_title', time_alloted = '$time_allot' WHERE exam_id = '$exam_id'";
+    $query = "INSERT INTO exams(exam_title, exam_desc, exam_due_date, time_alloted,exam_total_marks,teacher_id,course_id) 
+    VALUES ('$exam_title', '$exam_desc', '$due_date', '$time_allot','10','$teacher','$course')";
     $result = mysqli_query($db, $query);
 
     if ($result) {
+        $exam_id = mysqli_insert_id($db);
         // Assuming you have a way to fetch and update questions and options
         if (isset($_POST['question']) && isset($_POST['option1']) && isset($_POST['option2'])) {
             $questions = $_POST['question'];
             $options1 = $_POST['option1'];
             $options2 = $_POST['option2'];
-
+           
             for ($i = 0; $i < count($questions); $i++) {
+                $correctoption = $_POST['correctoption['.++$i.']'];
                 $question = mysqli_real_escape_string($db, $questions[$i]);
                 $option1 = mysqli_real_escape_string($db, $options1[$i]);
                 $option2 = mysqli_real_escape_string($db, $options2[$i]);
-
-
+                $correctoption = mysqli_real_escape_string($db, $correctoption[$i]);
+                 echo $correctoption;
+                 exit();
                 // Update or insert the question and options based on your application logic
                 // You should handle potential errors here and return appropriate messages
                 $query = "INSERT INTO exam_questionnaire (exam_id, question, option_1, option_2) 
@@ -265,38 +335,7 @@ function updateExam()
 }
 
 
-function create_exam($exam_title, $exam_desc, $total_marks, $due_date, $course_id, $questions, $options) {
-    $db = $GLOBALS['db'];
-    
-    // Insert exam details into the 'exams' table
-    $query = "INSERT INTO exams (title, description, total_marks, due_date, course_id) 
-              VALUES ('$exam_title', '$exam_desc', '$total_marks', '$due_date', '$course_id')";
-    $result = mysqli_query($db, $query);
 
-    if ($result) {
-        $exam_id = mysqli_insert_id($db); // Get the auto-generated exam ID
-
-        // Loop through questions and options and insert them into the 'questionnaire' table
-        for ($i = 0; $i < count($questions); $i++) {
-            $question = mysqli_real_escape_string($db, $questions[$i]);
-            $option1 = mysqli_real_escape_string($db, $options[$i]['option1']);
-            $option2 = mysqli_real_escape_string($db, $options[$i]['option2']);
-
-            $query = "INSERT INTO exam_questionnaire (exam_id, question, option1, option2) 
-                      VALUES ('$exam_id', '$question', '$option1', '$option2')";
-            $result = mysqli_query($db, $query);
-
-            if (!$result) {
-                // Handle error if the question couldn't be inserted
-                // You can choose to roll back the transaction or take appropriate action
-            }
-        }
-
-        return true; // Exam creation was successful
-    } else {
-        return false; // Exam creation failed
-    }
-}
 
 function student_login() {
     global $db;
@@ -342,6 +381,38 @@ function get_student_courses($std_id, $semester) {
 
     return $courses;
 }
+function get_course_exam($course_id) {
+    $db = $GLOBALS['db'];
+
+    // Assuming you have a table named 'exams' with relevant columns
+    $query = "SELECT * FROM exams WHERE course_id = '$course_id' LIMIT 1";
+    $result = mysqli_query($db, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        return mysqli_fetch_assoc($result); // Return the first (and only) row
+    } else {
+        return null; // No matching row found
+    }
+}
+function get_all_exams_for_course($course_id) {
+    $db = $GLOBALS['db'];
+
+    $exams = array(); // Initialize an array to store all exam rows
+
+    // Assuming you have a table named 'exams' with relevant columns
+    $query = "SELECT * FROM exams WHERE course_id = '$course_id'";
+    $result = mysqli_query($db, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $exams[] = $row; // Add each row to the $exams array
+        }
+    }
+
+    return $exams; // Return the array of exam rows
+}
+
+
 function get_teacher_courses($ins_id) {
     $db = $GLOBALS['db'];
     $courses = [];
@@ -362,8 +433,8 @@ function get_teacher_exams($ins_id) {
     $db = $GLOBALS['db'];
     $exams = [];
 
-    // Assuming you have a table named 'student_courses' with columns 'std_id', 'course_id', and 'semester'
-    $query = "SELECT exam_id FROM exams WHERE teacher_id = '$ins_id'";
+    // Assuming you have a table named 'exams' with columns 'exam_id', 'teacher_id', and 'is_deleted'
+    $query = "SELECT exam_id FROM exams WHERE teacher_id = '$ins_id' AND is_deleted = 0";
     $result = mysqli_query($db, $query);
 
     if ($result && mysqli_num_rows($result) > 0) {
@@ -374,6 +445,7 @@ function get_teacher_exams($ins_id) {
 
     return $exams;
 }
+
 function get_course_details($course_id) {
     $db = $GLOBALS['db'];
     
@@ -420,6 +492,88 @@ function get_question_details($exam_id) {
     
     return $question_details;
 }
+function get_student_exams($exam_id) {
+    $db = $GLOBALS['db'];
+    
+    // Assuming you have a table named 'exam_questionnaire' with relevant columns
+    $query = "SELECT * FROM student_exam WHERE exam_id = '$exam_id'";
+    $result = mysqli_query($db, $query);
+    
+    $student_details = array(); // Create an array to store question details
+    
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            // Append each row to the array
+            $student_details[] = $row;
+        }
+    }
+    
+    return $student_details;
+}
+function get_studentexam_details($exam_id, $std_id) {
+    $db = $GLOBALS['db'];
+    
+    // Assuming you have a table named 'student_exam' with relevant columns
+    $query = "SELECT * FROM student_exam WHERE exam_id = '$exam_id' AND std_id = '$std_id'";
+    $result = mysqli_query($db, $query);
+    
+    if ($result && mysqli_num_rows($result) > 0) {
+        // Fetch and return the first (and only) row as an associative array
+        return mysqli_fetch_assoc($result);
+    } else {
+        // No matching row found, return an empty array or null as per your preference
+        return null;
+    }
+}
+function get_student_exam_details($std_id) {
+    $db = $GLOBALS['db'];
+
+    // Assuming you have a table named 'student_exam' with relevant columns
+    $query = "SELECT * FROM student_exam WHERE std_id = '$std_id'";
+    $result = mysqli_query($db, $query);
+
+    $student_exam_details = array();
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        // Fetch and store all rows in an array
+        while ($row = mysqli_fetch_assoc($result)) {
+            $student_exam_details[] = $row;
+        }
+
+        return $student_exam_details;
+    } else {
+        // No matching rows found, return an empty array or null as per your preference
+        return $student_exam_details;
+    }
+}
+
+function provideRemark() {
+    $db = $GLOBALS['db'];
+    $exam_id = mysqli_real_escape_string($db, $_POST['exam_id']);
+    $std_id = mysqli_real_escape_string($db, $_POST['std_id']);
+    $remarks = mysqli_real_escape_string($db, $_POST['remarks']);
+
+    // Update student_exam table
+    $updateQuery = "UPDATE student_exam SET remarks = '$remarks', is_graded = 1 WHERE exam_id = '$exam_id' AND std_id = '$std_id'";
+
+    if (mysqli_query($db, $updateQuery)) {
+        // Check if all students for this exam have been graded
+        $checkQuery = "SELECT COUNT(*) AS total_students, SUM(is_graded) AS graded_students FROM student_exam WHERE exam_id = '$exam_id'";
+        $result = mysqli_query($db, $checkQuery);
+        $row = mysqli_fetch_assoc($result);
+
+        if ($row['total_students'] == $row['graded_students']) {
+            // If all students are graded, mark the exam as graded
+            $updateExamQuery = "UPDATE exams SET is_graded = 1 WHERE exam_id = '$exam_id'";
+            mysqli_query($db, $updateExamQuery);
+        }
+
+        return true; // Update successful
+    } else {
+        return false; // Update failed
+    }
+}
+
 
 function get_content_details($course_id) {
     $db = $GLOBALS['db'];
@@ -437,6 +591,22 @@ function get_content_details($course_id) {
     }
 
     return $course_details;
+}
+function get_student_details($std_id) {
+    $db = $GLOBALS['db'];
+
+    // Assuming you have a table named 'student' with relevant columns
+    $query = "SELECT * FROM student WHERE std_id = '$std_id'";
+    $result = mysqli_query($db, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        // Assuming that 'std_id' is unique, so you fetch one row (the first one)
+        $student_details = mysqli_fetch_assoc($result);
+        return $student_details;
+    }
+
+    // Return null or an empty array to indicate that no student was found
+    return null;
 }
 
 function instructor_login() {

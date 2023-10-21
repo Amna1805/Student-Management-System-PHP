@@ -7,7 +7,14 @@ if (!isset($_SESSION['instructor'])) {
     header("Location: instructorlogin.php");
     exit();
 }
-
+if (isset($_POST['delete_exam'])) {
+    if (deleteExam()) {
+        echo '<script>alert("Course Deleted Succesfully!")</script>';
+        header('location:teacherexams.php');
+    } else {
+        echo '<script>alert("Failed!")</script>';
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,6 +30,16 @@ if (!isset($_SESSION['instructor'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Jacques+Francois&display=swap" rel="stylesheet">
     <title>Exams Information</title>
+    <script>
+        function completeDeletion() {
+            const response = confirm('Are you sure you want to delete this Exam?')
+            if (response) {
+                return true
+            } else {
+                return false
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -126,9 +143,9 @@ if (!isset($_SESSION['instructor'])) {
                     </form>
                     </td>
                     <td>
-                    <form action="deletcourse.php" method="POST">
+                    <form method="POST" onsubmit="return completeDeletion()">
                     <input type="hidden" name="exam_id" value="<?php echo  $exam_det['exam_id']; ?>">
-                    <button type="submit" class="action-button delete">Delete</button>
+                    <button type="submit" class="action-button delete" name="delete_exam">Delete</button>
                     </form>
                     </td>
                     </tr>
@@ -153,49 +170,39 @@ if (!isset($_SESSION['instructor'])) {
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Exam 1 -->
+                <?php  foreach ($exams as $exam) {
+             
+             $exam_det = get_exam_details($exam); 
+              $course_det = get_course_details($exam_det['course_id']); ?>
+                   
                     <tr>
-                        <td>Artificial Intelligence</td>
-                        <td>This exam covers advanced AI concepts and applications.</td>
+                        <td><?php echo $exam_det['exam_title'] ?></td>
+                        <td><?php echo $exam_det['exam_desc'] ?></td>
+                        <?php if($exam_det['is_graded']==0){ ?>
                         <td class="red">
-                            Not Graded
+                            Graded but no remarks
                         </td>
                         <td>
-                            <a href="providegrade.php" class="action-button grade">Grade Students</a>
+                        <form action="providegrade.php" method="POST">
+                    <input type="hidden" name="exam_id" value="<?php echo  $exam_det['exam_id']; ?>">
+                    <button type="submit" class="action-button grade">Provide Remarks</button>
+                    </form>
                         </td>
-                    </tr>
-                    <tr>
-                        <td>Cloud Computing</td>
-                        <td>This exam assesses your knowledge of cloud platforms and services.</td>
-                        <td class="red">
-                            Not Graded
-                        </td>
-                        <td>
-                            <a href="providegrade.php" class="action-button grade">Grade Students</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Machine Learning</td>
-                        <td>This exam assesses your knowledge of Machine platforms and services.</td>
-                        <td class="green">
+                        <?php } else {?>
+                            <td class="green">
                             Graded
                         </td>
                         <td>
-                            <a href="viewgrade.php" class="action-button view">View Grades</a>
+                        <form action="viewgrade.php" method="POST">
+                    <input type="hidden" name="exam_id" value="<?php echo  $exam_det['exam_id']; ?>">
+                    <button type="submit" class="action-button view">View Grades</button>
+                    </form>
                         </td>
-                    </tr>
-                    <tr>
-                        <td>Data Science</td>
-                        <td>This exam assesses your knowledge of Data Science Concepts.</td>
-                        <td class="green">
-                            Graded
-                        </td>
-                        <td>
-                            <a href="viewgrade.php" class="action-button view">View Grades</a>
-                        </td>
+                        <?php }?>
                     </tr>
                     <!-- Add more exam rows as needed -->
                 </tbody>
+                  <?php } ?>
             </table>
         </div>
 

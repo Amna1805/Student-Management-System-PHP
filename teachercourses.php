@@ -139,7 +139,7 @@ if (isset($_POST['delete_name'])) {
                     <td>
                     <form method="POST" onsubmit="return completeDeletion()">
                     <input type="hidden" name="course_id" value="<?php echo $course_det['course_id']; ?>">
-                    <button type="submit" class="action-button delete" name="delete_name">Delete</button>
+                    <button type="submit" class="action-button delete" name="delete_course">Delete</button>
                     </form>
                     </td>
                 </tr>

@@ -8,8 +8,14 @@ if (!isset($_SESSION['instructor'])) {
     exit();
 }
 if (isset($_POST['create_exam'])) {
-}
+    if (createExam()) {
+        echo '<script>alert("Exam created  Succesfully!")</script>';
+    } else {
+        echo '<script>alert("Failed!")</script>';
+    }
+} 
 ?>
+
 
 
 <!DOCTYPE html>
@@ -26,65 +32,57 @@ if (isset($_POST['create_exam'])) {
     <link href="https://fonts.googleapis.com/css2?family=Jacques+Francois&display=swap" rel="stylesheet">
     <title>Student Exams</title>
    
-       <script type="text/javascript">
-    function validateForm() {
-        console.log("calles")
-        var examTitle = document.getElementById("exam_title").value;
-        var examDesc = document.getElementById("exam_desc").value;
-        var examCourse = document.getElementById("exam_course").value;
-        var timeAlloted = document.getElementById("time_alloted").value;
-
-        // Regular expression pattern for valid characters (letters, spaces, full stops, and commas)
-        var validChars = /^[a-zA-Z ,.]+$/;
-
-        if (!validChars.test(examTitle)) {
-            alert("Invalid exam title. Only letters, spaces, full stops, and commas are allowed.");
-            return false;
-        }
-
-        if (!validChars.test(examDesc)) {
-            alert("Invalid exam description. Only letters, spaces, full stops, and commas are allowed.");
-            return false;
-        }
-
-        if (examCourse === "") {
-            alert("Please select a course.");
-            return false;
-        }
-
-        // Validate time allotted (customize the regex pattern as needed)
-        var timeAllotedRegex = /^\d+(\.\d+)?$/;
-        if (!timeAllotedRegex.test(timeAlloted)) {
-            alert("Invalid time allotted. Please enter a valid number.");
-            return false;
-        }
-
-        // Validate questions and options
-        for (var i = 1; i <= 10; i++) {
-            var question = document.getElementById("question" + i).value;
-            var option1 = document.getElementById("question" + i + "_option1").value;
-            var option2 = document.getElementById("question" + i + "_option2").value;
-
-            if (!validChars.test(question)) {
-                alert("Invalid question for Question " + i + ". Only letters, spaces, full stops, and commas are allowed.");
-                return false;
-            }
-
-            if (!validChars.test(option1)) {
-                alert("Invalid option 1 for Question " + i + ". Only letters, spaces, full stops, and commas are allowed.");
-                return false;
-            }
-
-            if (!validChars.test(option2)) {
-                alert("Invalid option 2 for Question " + i + ". Only letters, spaces, full stops, and commas are allowed.");
-                return false;
-            }
-        }
-
-        // If all validations pass, the form will submit
-        return true;
+    <script>
+        
+function validateForm() {
+    // Get the values of the exam title, time allotted, and questions
+    var examTitle = document.getElementById("exam_title").value;
+    var timeAllot = document.getElementById("time_alloted").value;
+    var exam_desc = document.getElementById("exam_desc").value;
+    // Validate exam title (only alphabets, spaces, numbers, commas, and periods are allowed)
+    var regex = /^[a-zA-Z0-9\s.,?-]+$/;
+    if (!regex.test(examTitle.trim())) {
+        alert("Please enter a valid exam title (Only alphabets, spaces, numbers, commas, and periods).");
+        return false;
     }
+    if (!regex.test(exam_desc.trim())) {
+        alert("Please enter a valid exam Desc(Only alphabets, spaces, numbers, commas, and periods).");
+        return false;
+    }
+
+    // Check if time allotted is empty
+    if (timeAllot.trim() === "") {
+        alert("Time allotted cannot be empty");
+        return false;
+    }
+
+    // Validate questions and their corresponding options
+    var questionInputs = document.getElementsByClassName("question");
+    for (var i = 0; i < questionInputs.length; i++) {
+        var questionInput = questionInputs[i];
+        var questionText = questionInput.value.trim();
+
+        if (questionText === "") {
+            alert("Please enter a valid question for Question " + (i + 1));
+            return false;
+        }
+
+        var option1Input = document.getElementById("mcq" + (i + 1) + "_opt1");
+        var option2Input = document.getElementById("mcq" + (i + 1) + "_option2");
+        var option1Text = option1Input.value.trim();
+        var option2Text = option2Input.value.trim();
+
+        if (option1Text === "" || option2Text === "") {
+            alert("Please fill in both options for Question " + (i + 1));
+            return false;
+        }
+    }
+
+    // All validations passed
+    return true;
+}
 </script>
+
 <style>
         .custom-select {
     background-color: #5295c2;
@@ -148,6 +146,7 @@ if (isset($_POST['create_exam'])) {
     </header>
     <form method="POST" onsubmit="return validateForm();">
 
+
     <section class="exam-info-section">
     <div class="exam-info">
         <div class="exam-info-heading">
@@ -157,48 +156,57 @@ if (isset($_POST['create_exam'])) {
             <input type="text" placeholder="Exam Desc" name="exam_desc" id="exam_desc">
         </div>
         <div class="exam-info-heading">
-            <select name="exam_course" class="custom-select" id="exam_course">
+            <input type="text" placeholder="time_alloted" name="time_alloted" id="time_alloted">
+        </div>
+        <div class="exam-info-heading">
+            <select name="course_id" class="custom-select" id="exam_course" >
                 <option value="">Select a Course</option>
                 <?php
                 foreach ($courses as $course) { 
                     $course_det = get_course_details($course);
                 ?>
-                <option value="<?php echo $course_det['course_id']?>" style="color:blue;"><?php echo $course_det['course_title']; ?></option>
+                <option required value="<?php echo $course_det['course_id']?>" style="color:blue;"><?php echo $course_det['course_title']; ?></option>
                 <?php } ?>
             </select>
         </div>
         <div class="time-remaining">
-            <input type="date" placeholder="due_date" name="due_date" id="due_date">
+            <input type="date" placeholder="due_date" name="due_date" id="due_date" required>
         </div>
     </div>
 
     <div class="exam-mcqs">
-        <?php for ($i = 1; $i <= 10; $i++) { ?>
-        <div class="mcq">
-            <div class="questionsdiv">
-                <p><?php echo $i; ?>.</p>
-                <input class="question" type="text" placeholder="Question <?php echo $i; ?>" name="question<?php echo $i; ?>" id="question<?php echo $i; ?>">
-            </div>
+        <?php for ($i = 1; $i <= 2; $i++) { ?>
+            <div class="mcq">
+    <div class="questionsdiv">
+    <p><?php echo $i; ?>.</p>
+        <input class="question" type="text" placeholder="Question" name="question[]" id="question<?php echo $i; ?>">
+    </div>
 
-            <div class="optionsdiv">
-                <label>
-                    <input type="radio" name="question<?php echo $i; ?>_option" value="option1" id="question<?php echo $i; ?>_option1">
-                    <input type="text" class="option" placeholder="Option 1" name="question<?php echo $i; ?>_option1">
-                </label>
-            </div>
+    <div class="optionsdiv">
+        <label for="mcq<?php echo $questionCounter; ?>_option1">
+            <input type="text" class="option" placeholder="Option 1" name="option1[]" id="mcq<?php echo $i; ?>_opt1" >
+        </label>
+    </div>
 
-            <div class="optionsdiv">
-                <label>
-                    <input type="radio" name="question<?php echo $i; ?>_option" value="option2" id="question<?php echo $i; ?>_option2">
-                    <input type="text" class="option" placeholder="Option 2" name="question<?php echo $i; ?>_option2">
-                </label>
-            </div>
-        </div>
+    <div class="optionsdiv">
+        <label for="mcq<?php echo $questionCounter; ?>_option2">
+            <input type="text" class="option" placeholder="Option 2" name="option2[]" id="mcq<?php echo $i; ?>_option2">
+        </label>
+    </div>
+    <div class="optionsdiv">
+        <p>Choose correct option:</p>
+        <label for="mcq<?php echo $questionCounter; ?>_correct_answer">
+            <input type="radio" name="correctoption[<?php echo $i ?>]"  value="c_option1" >Option 1 
+            <input type="radio" name="correctoption[<?php echo $i ?>]"  value="c_option2" >Option 2
+        </label>
+    </div>
+    
+</div>
         <?php } ?>
     </div>
 </section>
 
-   
+<input type="text" name="teacher_id" hidden  value="<?php echo $teacher_id;  ?>">
 
     <div class="create-button">
         <button type="submit"  name="create_exam">Create</button>
