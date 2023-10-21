@@ -10,6 +10,34 @@ function displayImage($imageData) {
         return '';
     }
 }
+function get_course_students($course_id) {
+    $db = $GLOBALS['db'];
+    $students = [];
+
+    $query = "SELECT std_id FROM student_courses WHERE course_id = '$course_id'";
+    $result = mysqli_query($db, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $students[] = $row['std_id'];
+        }
+    }
+
+    return $students;
+}
+function get_student_result($std_id, $course_id) {
+    $db = $GLOBALS['db'];
+    $student_result= null;
+    $query = "SELECT * FROM student_result WHERE std_id = '$std_id' AND course_id = '$course_id'";
+    $result = mysqli_query($db, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        $row = mysqli_fetch_assoc($result);
+        $student_result = $row;
+    }
+
+    return $student_result;
+}
 
 function createCourse()
 {
@@ -363,6 +391,22 @@ function student_login() {
         echo '<script>alert("Database error. Please try again later."); window.location = "studentlogin.php";</script>';
         exit();
     }
+}
+function get_student_details($std_id) {
+    $db = $GLOBALS['db'];
+
+    // Assuming you have a table named 'student' with relevant columns
+    $query = "SELECT * FROM student WHERE std_id = '$std_id'";
+    $result = mysqli_query($db, $query);
+
+    if ($result && mysqli_num_rows($result) > 0) {
+        // Assuming that 'std_id' is unique, so you fetch one row (the first one)
+        $student_details = mysqli_fetch_assoc($result);
+        return $student_details;
+    }
+
+    // Return null or an empty array to indicate that no student was found
+    return null;
 }
 
 function get_student_courses($std_id, $semester) {
